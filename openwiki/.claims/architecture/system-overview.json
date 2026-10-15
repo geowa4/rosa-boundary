@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:83d3297993a895321eafb82ffa90ecd8a4f9e29bbfabc74f267a3b3170e091dc",
+  "pageVersion": "sha256:7da5d4a5fa89e5970192a34f8f9bb07e26a9ae68a896b50ad4f4d48094479f87",
   "claims": [
     {
       "id": "claim_aa4b01f857934a6dbcc398aa0c3355c0",
@@ -26,15 +26,23 @@
     },
     {
       "id": "claim_3dadbf40d0b0414bb483615e237e52fd",
-      "statement": "The create-investigation Lambda validates OIDC claims, creates or reuses an investigation-specific EFS access point, registers a task definition wired to it, and launches an ECS Fargate task with ECS Exec and investigation/deadline tags.",
+      "statement": "The create-investigation Lambda validates OIDC claims, creates or reuses an investigation-specific EFS access point, performs a session-checked handover of any existing running task for the investigation, registers a per-investigation task definition wired to the access point with task-scoped credential overlays, and launches an ECS Fargate task with ECS Exec and investigation/deadline tags.",
       "evidence": [
         {
           "resource": "repo://lambda/create-investigation/handler.py#L175-L281",
           "version": "repo-lines-v1:sha256:8d207ea1482bb09d98106b99d2d303229d7f17ef2c0a1c06fc2143f79e70683e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzMDg4OWY0NDRkNWE4NmRmNzE2ZDk2MTU5YzcxNjgxODJmMmM1ZTYxMjI5ZTY5MDk3Y2JkZDI3OGQ5ODllMTk3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmOWIxOTgyZThkZDc0ODExODE0NmIzOWEyZDAwNjJmNDA4MWUzNDc3OWI4Njc1YzIzNGM0ZmIxMjRkYzM5MzkwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiYzU2OGU0MTZiMjk0Yjc2NTNhY2VjYzhkYzFlMmMxNjdmMjlmYmNhZjVkN2YyZDc4N2Y0MDUwNDk0Nzc4OWE2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2YWM2NGI2ZmM2NDA3MDYxNDVlMjQzMmE4MzQ5YzkyNTExN2M4YTc4MmNkYzZmY2UxMWU1ZDI5NDY4NGQ0Nzg5In0"
         },
         {
-          "resource": "repo://lambda/create-investigation/handler.py#L641-L905",
-          "version": "repo-lines-v1:sha256:ea8f7a579ff01c5ce8b0c52d71295a94cdce77dbb605943c6e0d03227f6f0006:eyJzZWxlY3RlZExpbmVDb3VudCI6MjY1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhMzA5YWYwMTMyYjViMTUzM2VhZmU2NTIzN2ZiZjZmNTI1MzE4NmYzNGYwNTIzYmZiNGUzZmVmMTQ1MGM0ZDk3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1OTA5YTUzYTYxOGQwMjhlMWQzMDAwYzBhN2FiY2VlY2JlNWZiMzdmNGU1MTFlZmU0NjY0M2ZhZDZlNjY4NzJmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0YTRiZWYyYzg3NWNjMjgyYjY2ZTM1YzZmODc1MjNjMmNiMWJlOWViZTVhMThlZGFjZTA4ZTdjYjljZTkyNDI4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxY2UwZTk0YTVhNGE2OGE3OGVhYjI4NDdiYTkzMjY1ZDE4MDFmOTU0M2MwMTkwMGJkMzViOGNmYmY5MWZlYjYwIn0"
+          "resource": "repo://lambda/create-investigation/handler.py#L469-L638",
+          "version": "repo-lines-v1:sha256:4fdfb1fc2a8b40fcf321cbfa8332c2ea80b9f83eff3ef746d80a63aa944dd2f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyYzRjMDM5MmJjNmVlNDliZTU3ODg3NTcyZjNjZWIxMzE2ODljZGUyM2Q1ZTI3NTY5NzUwYjc4YjQyY2I0MGNmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkMjQyZDE0NThkYjlkMTg4NzVkN2VjMDQyMTA3YjAyYjljMzJiOTk5ZThmMWJlNTViZjgwNzc1Y2M3M2U3YzJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkNzAxNDllMDY5YWQ2N2VjY2Y0NzM2NDZmZjFjNzUwMDUwZDMyOWQxMTAwMThkYzU3NjY4NzhlYWZhMWQ2MDdkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0OGE0YjY5NjJlZDE5OWY4ZGJhZGY5YTUzMTlmODk5MGEwNDg2Y2QwZjc3YTI1YTlmYjIxYjdkZjM1ZDAzMTgwIn0"
+        },
+        {
+          "resource": "repo://lambda/create-investigation/handler.py#L682-L774",
+          "version": "repo-lines-v1:sha256:53180f96b3890eb224de3adbbd4a106a989161b1380a4abfc32676bb40656304:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkZWFkZmRjMWYxMDY0ZGVlNmM0MzNkMDEyZjc3NGFhZGQxOGU2YmI1NTg4NWU1M2RjNGIwMWQ4MDY5ZjExYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMDM0ODFjNTdkMGYwZGMwZjc2Y2QyY2M4YjM2MDRjNGU4Mjk2ZGE0MTIyYWRkMTllODE3NDVkYzdlMzMxYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyOTQ5MTE2MjcyNGM1YmQ1ZTc4NDFiMjA1ZGUxYjkyOGY1MGFmNWIxMTI2ZThjZWQ2YjJjMDE5YTVjMjlmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwMzBiMjA2MTk4NTEwZGVmMmRlZGQ2NzA3MDM2YWU1YTEwMzcyZTcxMzFhZWQ1OTM4OGFlNTQ1YTk2OGY4MDkifQ"
+        },
+        {
+          "resource": "repo://lambda/create-investigation/handler.py#L886-L999",
+          "version": "repo-lines-v1:sha256:92f95d1a3c7973a9c1693e8bf5e8dbd4d0814042ade24196e90ae79990dcc5c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1M2YzNWUyZWFlMWY2YTI2NDdiN2U5NGMyNTBlMzRiMzA2MTE4NDFiZjMwMDE1NzUyNTNjMDJmY2I3ZTA1MTI4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwMTYzZDdiYmFiMDY5ZjI5NWZkYzIwZjA4NDllMGJmODA2ZWIzMjc4NDljOWZlMzU0MTkzNTc1ZTIyOWEyNDI3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhN2NiYTczZWVmNTNjODJkZmRiODQxYTBjMDNjNGZiZWU1ZDUzMWUwZTg4ZGRlNmIxY2JhMGQ5ZGNjYzM3ODUwIn0"
         }
       ]
     },
@@ -79,10 +87,80 @@
           "version": "repo-lines-v1:sha256:5c65f07459b59802bb20f4e1b9aaf6deaca65bb8c246a5cde6540aef75bd3414:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjQ4ODZhMWM2MjQxNWVkY2MyOTM3YTdlZmMxNWUyMmY1OTc1MzZkNjg1ODEzMDQxNWEyYWZjZjEwN2UyZDg1ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmFmYmEwNTI3YzM5NTNjNGI2ZTBlNWI1NzM5YmE4MzYxMmY4MDUzYmNkYzk0NjY3MzAxOTNjZDFkNTkwYjQwOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDM1YmMyOWIxNGQwNzAwYmJkY2FlYThkN2NkZDE3ZDRjZDViM2U2NGVmM2Q2ZDQ2NTdlOGNlZTY4OTkxYzhiMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg5MTVhYTk2NTdlZDEzOTRiNjVmZTIzZTJhMTk0YTE4MTJjYmJmNDMxZjVmMWIyYzE4OGM5MjEwN2QwYzE3ZCJ9"
         }
       ]
+    },
+    {
+      "id": "claim_14d12e3b282c4903a7521cc73447cd4e",
+      "statement": "The create-investigation Lambda registers a per-investigation ECS task definition that replaces the EFS home volume with the investigation's access point, strips and re-adds task-scoped (non-EFS) overlay volumes for the OCM config and kubeconfig credential paths using path-traversal-safe protected_mount_path checks, and injects a Secrets Manager kubeconfig reference into the kube-proxy sidecar's secrets.",
+      "evidence": [
+        {
+          "resource": "repo://lambda/create-investigation/handler.py#L469-L638",
+          "version": "repo-lines-v1:sha256:4fdfb1fc2a8b40fcf321cbfa8332c2ea80b9f83eff3ef746d80a63aa944dd2f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyYzRjMDM5MmJjNmVlNDliZTU3ODg3NTcyZjNjZWIxMzE2ODljZGUyM2Q1ZTI3NTY5NzUwYjc4YjQyY2I0MGNmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkMjQyZDE0NThkYjlkMTg4NzVkN2VjMDQyMTA3YjAyYjljMzJiOTk5ZThmMWJlNTViZjgwNzc1Y2M3M2U3YzJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkNzAxNDllMDY5YWQ2N2VjY2Y0NzM2NDZmZjFjNzUwMDUwZDMyOWQxMTAwMThkYzU3NjY4NzhlYWZhMWQ2MDdkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0OGE0YjY5NjJlZDE5OWY4ZGJhZGY5YTUzMTlmODk5MGEwNDg2Y2QwZjc3YTI1YTlmYjIxYjdkZjM1ZDAzMTgwIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_76884b821b53487b86fc78ce03a31c7d",
+      "statement": "Before launching a replacement task for an investigation that already has a running task, the create-investigation Lambda fails closed: it verifies no active SSM/ECS Exec session exists on any existing task (raising HandoverFailedError with status 409 if one is active, or 500 if session state cannot be verified), then stops the existing task(s) and waits for STOPPED before proceeding.",
+      "evidence": [
+        {
+          "resource": "repo://lambda/create-investigation/handler.py#L682-L774",
+          "version": "repo-lines-v1:sha256:53180f96b3890eb224de3adbbd4a106a989161b1380a4abfc32676bb40656304:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkZWFkZmRjMWYxMDY0ZGVlNmM0MzNkMDEyZjc3NGFhZGQxOGU2YmI1NTg4NWU1M2RjNGIwMWQ4MDY5ZjExYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMDM0ODFjNTdkMGYwZGMwZjc2Y2QyY2M4YjM2MDRjNGU4Mjk2ZGE0MTIyYWRkMTllODE3NDVkYzdlMzMxYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyOTQ5MTE2MjcyNGM1YmQ1ZTc4NDFiMjA1ZGUxYjkyOGY1MGFmNWIxMTI2ZThjZWQ2YjJjMDE5YTVjMjlmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwMzBiMjA2MTk4NTEwZGVmMmRlZGQ2NzA3MDM2YWU1YTEwMzcyZTcxMzFhZWQ1OTM4OGFlNTQ1YTk2OGY4MDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1829b739e62f4ce4bdf5959a770ebf74",
+      "statement": "The reap-investigations Lambda (lambda/reap-investigations/handler.py) is a third, independently scheduled component distinct from reap-tasks: it runs on a multi-hour EventBridge schedule (var.investigation_reaper_schedule_hours) and garbage-collects whole stale investigations rather than enforcing individual task deadlines, which reap-tasks continues to do on its short-interval schedule.",
+      "evidence": [
+        {
+          "resource": "repo://deploy/regional/lambda-reap-investigations.tf#L180-L231",
+          "version": "repo-lines-v1:sha256:1ce0823cd030050874f9de3dd8e39147bd1d3aed66df9d982f6e04ca4a3b773b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxYTNhYjE1ZDhmM2JlZWVjNzYzOGY0NTQyNjAwZjkzZDkwNDNjYjg0NzJiZmQ3MDI2NGNjMGM2YWE2ZDQ5ZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhYzFkZjg0NDJiMzNkN2U3M2NjNWY3NjkxMmNkNGIyNWYwM2E2NTA4NTQxOGNiZGZiMzZmNzRkZGY4ZjVjY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4NTViZTBmOTFhZTM3NTBmZTliM2I2OTM1YmY3NTVmMzhjMWExMWIzNDYxYjgyOWRmMDE2ZTc2OGJlZWMwNWUifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L1-L16",
+          "version": "repo-lines-v1:sha256:9f6893291203953899a125e3d7edf46f64d4bf24a1c1b9d7aa83bbed9840ee22:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzMDNlY2RkNGE0ZDEwZjE5YzczZmQ0MmZkMTI0MzdmZDMzNTRhODI2ODE2MDVkYTUyNTVhOTdhMzkwNjhkYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlNjllYTFlNTE3YWQ3YTMwYmI4ZWQ5ZjZhZmRlYzNlMTU0YjBiZWQzYzM2Y2VjOGQ2MDgzYzU4ZGIyYTMwMGEifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-tasks/handler.py#L1-L6",
+          "version": "repo-lines-v1:sha256:7f9b43b3bac3554d2cb3f1e9c55fa70d27d74d9858f0593618d36d9c7cef1544:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTMwM2VjZGQ0YTRkMTBmMTljNzNmZDQyZmQxMjQzN2ZkMzM1NGE4MjY4MTYwNWRhNTI1NWE5N2EzOTA2OGRiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTMwM2VjZGQ0YTRkMTBmMTljNzNmZDQyZmQxMjQzN2ZkMzM1NGE4MjY4MTYwNWRhNTI1NWE5N2EzOTA2OGRiYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzJhZDg5OTY5ODExOTI3MDMxMTMzNWU5ODY3MWM1OGNiM2I5NDYwY2IzYzAyNDhiYzYzMTc3YmM5YTI0YTNlNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4a29e57bd92b4c159d562b709fa8ea0f",
+      "statement": "An investigation is eligible for reaping by reap-investigations only once it has had zero RUNNING ECS tasks for longer than a configurable grace period (GRACE_PERIOD_HOURS, derived from the EFS access point's CreatedAt tag); any investigation with a currently running task is never considered stale regardless of age, and task state is re-verified immediately before deletion.",
+      "evidence": [
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L204-L219",
+          "version": "repo-lines-v1:sha256:18214d9d0bb78199bfff4db97bedaf79b277441a0b06ffc49ad1ef1b143bedb7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkNzIwODQ3N2Y0MTI5Nzk3NDQ2MzkwYzM0NGEwMWY2NmNkNWMzODM1MWMyNDcyY2IxZWQ2ZTcwNzQ1NmYxZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOGE5ZTljMzI1MjgyMGM2NWE4MTY1MjBiOGRiNDkzMjI4MDg0OWVjOGM3ZDJlYjYyNzJhZmRmZWJlMDU5YzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyZTgyZTcwYjljNmE4ODY3ZDcxZmY2MzE0ZDFlMjA2MmZhOGVhMWE2MTk1ZGI0MDFkMWMxNmZiMzg1YjQ0OGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2MTViMDQ4YWY5YmQ5YWYwM2JmZDliMTE0YTkxOTFlYzUzZTgzNjhhZGUyYjg4MmMwMGZmNTVjMDRhNjMxOTgifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L252-L319",
+          "version": "repo-lines-v1:sha256:cf84368cec2ff40091e63ebde3cb9f627dedd42fc4fba3ff7ca2845a4632fe80:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NTA4ZGY5YTczZGY3MWZiYjMxMDRhOTYzNmM4MTc4OTk0MzE3OGVlYzE0ZTU4NzFiOTNmNzBlZmJjZTIwMDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmYmQwMDkzMTRiYzI3MDg0MTY3MzRhMDJhZTVmZjM5YTFlNDhhMDUwYmU5MWY0M2IyZmFhOTIwMDJjNjJiZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2NjcwNTUxOWVmZGQwZmQxZWI4ZDlmMzAxZWUzYzYyM2NmODVhM2Y3MGJiMjk3N2VmYTcyNGEwODVkN2FhYjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c8f310c311ac48c29b5b71786204d057",
+      "statement": "Reaping a stale investigation deletes, in order, the EFS directory contents (after a mandatory S3 backup that blocks deletion if it fails or S3_AUDIT_BUCKET is unset), then the EFS access point (only if directory deletion succeeded, since the access point's tags are the only way to locate the directory), and finally deregisters any ECS task definitions whose family matches the investigation's {TASK_DEFINITION_FAMILY}-{cluster_id}-{investigation_id}-<timestamp> pattern, with task-definition deregistration attempted regardless of the earlier steps' success.",
+      "evidence": [
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L462-L517",
+          "version": "repo-lines-v1:sha256:6b27154debaff3606aa185d82479e9ad6c7143e1b15a69b1f74c9c17f0756ce8:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhYTMyZDJjOWMxNTliNzY2MzU2N2MyYjBlZWJkMDhiY2EwYjFjNzk0NjhjMTVjNzNkMjFmOWNhMjJhYzk4NzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxYmU5MzA1MDBmMzFkOGVhOWNiMDIwYTUxZGFiMGVmNjMzYmFjYjAxNTc5ZDk5MWI4OTM4YjI4ZGZmOThmZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwNDU0M2RkNDIxYzdjM2UzMTAzMGQ3NDNhYjAxYjRkYzhhYzcyMGMxM2FlNjMzNmM0YThiM2RiMmU0Y2ZjMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyZDUxZjI2Mzk2ZWMxZjcyMTVhZGRhZjJkODQ3YTQwOGJjZmEzYWMxM2IzZTViYzA5YmQxNzRhNzgwOTA1NDIifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L660-L711",
+          "version": "repo-lines-v1:sha256:7e0016a5da652568ec269def72c546b6ecf9fdd5e14732c087c4aeeed063c7a1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ZDkzNDMyYzYwOTkwNmU5YmE1OWE2NzMyYjljMzNmYjQ4MTA3OGVkM2RhOGYzY2RiMDI4MTkwNTY5YjJhNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5OWVmZWRmZDJkOTcwNmQ4OTFjN2JhOTgzZTdmODRlMDVhZDBlMDE5MWMxMzI3OThiZTVlM2MxY2M1MzA0MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5ZDA5YTY3MThiNWYxMWYxZDI3ODdhMmI3ZTA1ZDk3YWFiM2ZiZGVlY2NmMDk1YzY0MTc5Nzc2MzkxOWNkZTAifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L737-L802",
+          "version": "repo-lines-v1:sha256:351f19b5245ae130a124c76e30897becdb9e8a6d04fb3a2a0305b1ec0e721ff9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmYWRkMDY2YzMyZmMxY2UxYWQyZDkxMTkwOGQwNjU3ZDFjN2IzOWM0NDMyODI0M2UwN2EwZjVjZjAwODFiYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzYjIyMzQzZTljNzU1OTIzM2RjNDZkY2VhNTg5OTY1OGY2Yzg2YTczMTRmYTQ2MjA5OGYyOTI4YWY2YWQzZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5OWVmZWRmZDJkOTcwNmQ4OTFjN2JhOTgzZTdmODRlMDVhZDBlMDE5MWMxMzI3OThiZTVlM2MxY2M1MzA0MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-09T17:13:47.426Z"
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-15T16:03:34.007Z"
   }
 }

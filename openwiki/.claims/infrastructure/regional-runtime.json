@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a222261ef040e497bc9af72d1699433861826c88635483028fdb54cedabe4de6",
+  "pageVersion": "sha256:ff37d6acb8ab33566a9a639956efbb20f63f6f22e00bd6a00a94e1b87064a98a",
   "claims": [
     {
       "id": "claim_4191e613a2324557823afcf516dae80a",
@@ -32,15 +32,15 @@
     },
     {
       "id": "claim_9c822e2241a3468293b5c438878bf737",
-      "statement": "Regional EFS is encrypted, provides an access point as UID/GID 1000, and its filesystem policy requires the task role to mount through an access point.",
+      "statement": "Regional EFS is encrypted, provides an access point as UID/GID 1000, and its filesystem policy's EnforceAccessViaAccessPoint statement requires the task role to mount through an access point.",
       "evidence": [
         {
           "resource": "repo://deploy/regional/efs.tf#L1-L14",
           "version": "repo-lines-v1:sha256:52490dc6ca162057e4b60f326a6a883a8131fc26597c1d72152cf65b39aafe93:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkODg5YzFkNDNiMjA2NmU1NTVhMDgzMzkxZDhmZTc2NmI3N2ZjZTYwYTgwMzM3OTZkOWQ2ZWJkM2NjMWZjNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiZjJkZGQ3MTg3YThmY2FmY2M2YmY1MmU0ZjUwMGI1NjRiM2I1OTdhZTA0NDlhODg4NjY1NGU3MTJiZTEzZmIifQ"
         },
         {
-          "resource": "repo://deploy/regional/efs.tf#L45-L97",
-          "version": "repo-lines-v1:sha256:b92220f9efd73ecdad279638340f6eeab38e6ed32f73665b961a6c860fdb156f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNTkxYjIwZDZmZjZhZDc3ZGNjMzYzNWMxYTFlMjA3NWIyNmI4Y2MyNDRjZjBkY2M4YzI2OWI4ZjlhODEzODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMDk1YjEzNTVlODFmYjMyOGI0YjRmMjI0MmRiMWRlNjZjYmU4Nzc0ZTZmZmJkYTg4YWQ2ZjE1ZjZkNTc4NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://deploy/regional/efs.tf#L76-L102",
+          "version": "repo-lines-v1:sha256:2ac462f40f9b82dd3a8d8f9973ff9296eb0436e84118db7ab7f3537d22be2573:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwNzM0NzhiYjg4M2ZhYmZlMWRiNzRjM2NjMWVlMmNiMjhhMjg1Mjg5YzNmZTRjZDIxMDUzOGQ4OGNjMDJmZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NzhlMjUwM2I4Y2YzN2EwNmY3ZDZmMGEzYTZiNmZlMzU2OTFmYmNhYjUwYjg3NzVjYWI2ZmFiYzcxYzU5MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZjk1ZjJhMmZmNDU0NDJlMTM1ZDA0ZjY2ZmIyNTRiYTcwMTBlZTMyYmU4YjNhY2EwMDI3M2UxNzdkMDlmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5NmQ3MGNiNTczM2MyODVlNjczYTAxMGY2N2I4ZWM4ZjU2Y2E0ZjZhZWM2MGE3MjQyMGJmZmQ1Mzg2YTgxZGEifQ"
         }
       ]
     },
@@ -107,10 +107,62 @@
           "version": "repo-lines-v1:sha256:84a76fe0f339a2daef324361cb42653f85cc6efeb31986cf3ac3c84db44b9e37:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMTJjNWFlMDg0ODU3MTdjM2NiODBjNjhjOGU2ZTc5MWIwN2JhMDQxNjIzNDJjMjdmNDliOTcyOTM3Y2JlZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_04b70a901bb64661a902c37195e624cd",
+      "statement": "The EFS filesystem policy's AllowReaperViaDedicatedAccessPoint statement grants the reap-investigations Lambda role ClientMount/ClientWrite/ClientRootAccess scoped by elasticfilesystem:AccessPointArn to a single dedicated access point (aws_efs_access_point.reaper, UID/GID 0, rooted at '/'), kept separate from the task role's access-point-scoped grant and deliberately not extended to dynamically created per-investigation access points.",
+      "evidence": [
+        {
+          "resource": "repo://deploy/regional/efs.tf#L103-L126",
+          "version": "repo-lines-v1:sha256:0daf80cc2afc14bc5dd89064faa2c5fce3a70db58f88393d30055916e9a398e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5NWI4YzViZjg2Mzc0MzY3MWRlZjNmNjMwZWIyMzJkNTlhN2E2MzRhMDcwZmM0MzZlZWMzN2E4Njc0ZTZjMzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkZDI0NDU4MmI2ZmIwM2QyM2I4NDE1YWJlY2QzNDZiMGM5ZjQ2NmI2Zjc1MmIwNjgxODljZTdlOWEyZGMzNTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBlMjE1ZDVmZGZiOTk1NWJlNTk3MzQxN2EzZWY0YzFlNmJiZDAzZGY2MDI0MWE0ZDkzYjY5MTEzMzg3ZjE5YmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3ZTBhMGEyOTdiNmRlYzljZjdjMzRiZTJlMzgwMDdmN2RmYjMwODdjMzZkYjIxOTg0MTkzMTI3NTFhZmM0YTQifQ"
+        },
+        {
+          "resource": "repo://deploy/regional/lambda-reap-investigations.tf#L127-L150",
+          "version": "repo-lines-v1:sha256:845238869ff1131cc8cc2f51c5d6f164a8a0d8c3b7278d0b7e6df594996d8fd3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1MTM0MGRiOGRiZDM2OTgxYWZlMjY2M2ZiNTg5ZGFhMTU2ODg3OTZkOThkMGQyNmIxODk4NjQzODQ1NDc4ZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZjk1ZjJhMmZmNDU0NDJlMTM1ZDA0ZjY2ZmIyNTRiYTcwMTBlZTMyYmU4YjNhY2EwMDI3M2UxNzdkMDlmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmMDQyYzNmY2I0NmYxMTkzMzA4ZmQyMjI4MDE4OGRkMTE3NDIwYThlNDEyNjAzMDkzMGUwY2RhZGY3ZDkwMjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_387884970930403babf77fc06ac0ed21",
+      "statement": "The reap-investigations Lambda role has a separate, narrower DeleteAccessPoint permission (distinct from the dedicated-access-point mount grant) restricted by a resource-tag condition requiring ManagedBy=rosa-boundary-lambda, so it can only remove access points created by the create-investigation Lambda for other investigations, not arbitrary access points.",
+      "evidence": [
+        {
+          "resource": "repo://deploy/regional/lambda-reap-investigations.tf#L62-L94",
+          "version": "repo-lines-v1:sha256:ecd5e561073af08e51ca1ed219753bd9104be21da7c7d58522fd0017c288c44b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MDMzNWU1MjIyNDBjMjU3Y2JlOGIwZGU0NDQzOGMzYjk1MDI0YTE2YjI0ZTRjMDhkNTZiMTUwNTExOTMwM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiZDk1YjE4NDViZmMyNzA4YWU1ZjYyNTUxYTE1MzU5NWZiNDZlZGVjNDJkZDkyYTRjY2QxMzE5ZWMzZTQ2Y2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhMzIxNGRlNzc1MGYwMjhhOGNhMDdiYjA0YWQxNTg3YzdmMjk5MzhjMTMxZWU3ODUxNDhmMWJlMDA0YTZmZTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_345f275b581940028c14336f22b3263d",
+      "statement": "The regional stack ships three Lambda functions (create-investigation, reap-tasks, reap-investigations); the reap-investigations Lambda has its own CloudWatch log group, an AWSLambdaVPCAccessExecutionRole policy attachment for VPC execution, scoped ECS ListTasks/DescribeTasks/ListTaskDefinitions/DeregisterTaskDefinition permissions, and EFS DescribeAccessPoints/DeleteAccessPoint plus ClientMount/ClientWrite/ClientRootAccess permissions bounded to its dedicated access point.",
+      "evidence": [
+        {
+          "resource": "repo://deploy/regional/lambda-reap-investigations.tf#L1-L94",
+          "version": "repo-lines-v1:sha256:ba0d14e23fbc5165657f00400d1df80406eb22c6bf82ddb74e1d205fb56defb3:eyJzZWxlY3RlZExpbmVDb3VudCI6OTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5NTcxN2ZlMWQ1YjU2YTk1MGRmNDQxNTM4ODk3MTAxN2I3MDRiOGFlYmNlMjhkZGNlN2M1NjYyMDg3MmEyNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhMzIxNGRlNzc1MGYwMjhhOGNhMDdiYjA0YWQxNTg3YzdmMjk5MzhjMTMxZWU3ODUxNDhmMWJlMDA0YTZmZTUifQ"
+        },
+        {
+          "resource": "repo://deploy/regional/lambda-reap-tasks.tf#L1-L41",
+          "version": "repo-lines-v1:sha256:4135147ffe9aabe1f2ad91ef9694538110dc176909828ae24d2d43c7e8046a13:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwNjFjNjU0ZjA5MjdlMDY5MjA5NmQxNzJhZmYzZjFkNTgzMGZjOTIyM2NjN2RhZmYxYzBmZTYxOTg5NGI4NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZmYyMTUxNTEyMjljZDE1YzkyZDNjNjk4MjdlZTY0MjA2N2ExOGJlNDhlNWJkZDczM2QyNmQ0YzMyZTc2ODAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_462a24d55cb749a7a879c8bcd922fc57",
+      "statement": "The reap-investigations Lambda mounts its dedicated EFS access point directly via file_system_config at /mnt/efs, runs on an independent EventBridge schedule (default 8-hour rate), and on each invocation lists tagged investigation access points, determines staleness from running-task state and a grace period, writes a final backup to the audit bucket under {cluster}/{investigation}/reaper-final-backup/*, then deletes the EFS directory, the access point, and matching task definitions.",
+      "evidence": [
+        {
+          "resource": "repo://deploy/regional/lambda-reap-investigations.tf#L96-L222",
+          "version": "repo-lines-v1:sha256:751bde4b537e7e7d323fff41e2e7e829798b808765835ac6c4edb3ad7e383a0b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjYzVhNzU0MGQ1ZTI1ODkxNWY5NDMyYmY3YmM2NTA3Mjc5ZThhMTU0MzhkMGQ3ODRkYmZkNWI4ODNlMDJhOThiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkY2Y5NWYyYTJmZjQ1NDQyZTEzNWQwNGY2NmZiMjU0YmE3MDEwZWUzMmJlOGIzYWNhMDAyNzNlMTc3ZDA5ZjIzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhMzE4YTlkM2I4YmE5YjdkMDljOTE1MzNmNDg1NmY5MGVhYjg1NDRmMGE4ZTRlYzYzMmYwNDBiODg0MWVjNzQ2In0"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L85-L250",
+          "version": "repo-lines-v1:sha256:1788e6f04f7e3dc5fa8ddacb2737a3a0d456e8e8e73aaa651d1dc0f3fd94aa4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMWZiZGY5NjcwZjM5Nzc3NTUxMTU0NDdlZjUyYzg4ZmY2MjhkNzVjNTkxMjliMWE5ZjVjMzdmOWMwYmExZGY4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkODY1YzZkYjNkZTE0MjBlMTI1YjhkNmI1ZDZjNGY3NDNkNTY0MjJhNmI2MTM1N2VkZDZiZmY5ZWJmZDU5NTNhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjMTNjODc0MDIyOTQ1YWI1ZDM5MzMyYWNkMGEwNGUwNzI0NDYyYzU2YWJmOThkYzMzMGU4YzBkNzQwYmE4MWJiIn0"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-09T17:13:47.426Z"
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-15T16:03:34.007Z"
   }
 }

@@ -16,10 +16,10 @@ sources:
     resource: repo://hcp-terraform/aws-creds/rosa-boundary-stage/main.tf
   - id: openwiki-source-81722021d767635aca673ab8
     resource: repo://hcp-terraform/rosa-boundary/main.tf
-generated: { by: "opencode", at: "2026-10-09T17:42:13.086Z" }
+generated: { by: "openwiki/0.7.1", at: "2026-10-15T16:03:34.007Z" }
 verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-09T17:42:13.086Z
+  - by: openwiki/0.7.1
+    at: 2026-10-15T16:03:34.007Z
 ---
 
 # HCP Terraform workspace integration
@@ -30,7 +30,7 @@ This page describes **public-repository-backed staging configuration and onboard
 
 | Account | Role in staging setup | Access boundary |
 |---|---|---|
-| `rosa-boundary-stage` (`150100906299`) | Long-lived staging VPC, HCP federation, shared account roles and regional Fargate runtime in `us-east-1` | The account ID is the provider guard in the [AWS credentials stack](../../hcp-terraform/aws-creds/rosa-boundary-stage/main.tf) and the [regional workspace inputs](../../hcp-terraform/rosa-boundary/main.tf). Staging uses dedicated HCP OIDC plan/apply roles rather than an operator's local AWS credentials. |
+| `rosa-boundary-stage` (`150100906299`) | Long-lived staging VPC, HCP federation, shared account roles and regional Fargate runtime in `us-east-1` | The account ID is the provider guard (`allowed_account_ids = ["150100906299"]`) in the [AWS credentials stack](../../hcp-terraform/aws-creds/rosa-boundary-stage/main.tf), which also pins its `tfe` provider to the `hp-platform-engineering` organization and declares the `aws_dynamic_creds` module whose `role_groups.default.projects.rosa-boundary.workspace_names` allowlists the four `rosa-boundary` L3 workspaces (plus `rosa-trusted-actions-stage` under a separate project). See the [regional workspace inputs](../../hcp-terraform/rosa-boundary/main.tf). Staging uses dedicated HCP OIDC plan/apply roles rather than an operator's local AWS credentials. |
 | Other environments | Not part of this deployment | Local `.env`, Makefiles, and tfvars are for local development, not staging HCP runs. CI and real-infrastructure testing must not be mistaken for the staging runtime account. |
 
 The [network root](../../deploy/network/) defines a dedicated VPC, two private subnets, NAT egress and an S3 gateway endpoint. Consult network outputs and the [regional workspace inputs](../../hcp-terraform/rosa-boundary/main.tf) for actual IDs; Backplane allowlisting is a separate network concern, not an HCP permission grant. The staging runtime uses the Red Hat EmployeeIDP issuer (`auth.redhat.com`, `ai-sd-sre` role/group, `uuid` ABAC key), separate from the `app.terraform.io` OIDC provider for Terraform AWS credentials. [Git-managed inputs](../../hcp-terraform/rosa-boundary/main.tf).

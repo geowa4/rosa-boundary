@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:50b772e419c7c2601cde7fff9b7bb9ba41ba79879b7d870a8086f5284ff85bd5",
+  "pageVersion": "sha256:661b05f54db4a550cb85c716999a9957a9bb0db2f6314800a76aa3fd96789835",
   "claims": [
     {
       "id": "claim_7f2dfd61cb3e4d3eb4577088e2e0533e",
-      "statement": "The CLI sends task-start requests to the create-investigation Lambda, which validates the operator, provisions or reuses an investigation EFS access point, and can launch a Fargate task using the regional task definition.",
+      "statement": "The CLI sends task-start requests to the create-investigation Lambda, which validates the operator, provisions or reuses an investigation EFS access point, and can launch a Fargate task using a per-investigation task definition derived from the regional task definition.",
       "evidence": [
         {
           "resource": "repo://deploy/regional/ecs.tf#L62-L82",
@@ -19,14 +19,14 @@
           "version": "repo-lines-v1:sha256:8d207ea1482bb09d98106b99d2d303229d7f17ef2c0a1c06fc2143f79e70683e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzMDg4OWY0NDRkNWE4NmRmNzE2ZDk2MTU5YzcxNjgxODJmMmM1ZTYxMjI5ZTY5MDk3Y2JkZDI3OGQ5ODllMTk3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmOWIxOTgyZThkZDc0ODExODE0NmIzOWEyZDAwNjJmNDA4MWUzNDc3OWI4Njc1YzIzNGM0ZmIxMjRkYzM5MzkwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiYzU2OGU0MTZiMjk0Yjc2NTNhY2VjYzhkYzFlMmMxNjdmMjlmYmNhZjVkN2YyZDc4N2Y0MDUwNDk0Nzc4OWE2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2YWM2NGI2ZmM2NDA3MDYxNDVlMjQzMmE4MzQ5YzkyNTExN2M4YTc4MmNkYzZmY2UxMWU1ZDI5NDY4NGQ0Nzg5In0"
         },
         {
-          "resource": "repo://lambda/create-investigation/handler.py#L676-L905",
-          "version": "repo-lines-v1:sha256:f8f3a6ea3fff03c82cc4c5af93e5052cb0317e9a3d28248add8b0bf38b3db92f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkYjVhY2Y0Y2ZlNzAxZWQ0MzNlMDNlNTliOTIwM2JiZTMxY2Q2MDNjYzljZDVlNzYzNDZjZTllOTBlYTc1MzU5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1OTA5YTUzYTYxOGQwMjhlMWQzMDAwYzBhN2FiY2VlY2JlNWZiMzdmNGU1MTFlZmU0NjY0M2ZhZDZlNjY4NzJmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyY2JiY2I0MDk5NTNkNDVkNjZjMGE2ZDc0ZTQ1ZWRlZDljOGFhM2EwODgwYTk3ODhhYjdlOTg0NTBkYjYwN2JiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxY2UwZTk0YTVhNGE2OGE3OGVhYjI4NDdiYTkzMjY1ZDE4MDFmOTU0M2MwMTkwMGJkMzViOGNmYmY5MWZlYjYwIn0"
+          "resource": "repo://lambda/create-investigation/handler.py#L676-L999",
+          "version": "repo-lines-v1:sha256:94e983ccb4dfe34d10d67ced6900b5da60c53b00ac2e5c932554f99d5b387690:eyJzZWxlY3RlZExpbmVDb3VudCI6MzI0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkYjVhY2Y0Y2ZlNzAxZWQ0MzNlMDNlNTliOTIwM2JiZTMxY2Q2MDNjYzljZDVlNzYzNDZjZTllOTBlYTc1MzU5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyY2JiY2I0MDk5NTNkNDVkNjZjMGE2ZDc0ZTQ1ZWRlZDljOGFhM2EwODgwYTk3ODhhYjdlOTg0NTBkYjYwN2JiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhN2NiYTczZWVmNTNjODJkZmRiODQxYTBjMDNjNGZiZWU1ZDUzMWUwZTg4ZGRlNmIxY2JhMGQ5ZGNjYzM3ODUwIn0"
         }
       ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-09T17:13:47.426Z"
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-15T16:03:34.007Z"
   }
 }

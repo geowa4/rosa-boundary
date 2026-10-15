@@ -1,4 +1,4 @@
 # Files
 
 - [Identity and access control](identity-and-access.md) - Explains how CLI OIDC login, Lambda authorization, AWS role assumption, and session-tag ABAC combine to authorize ROSA Boundary actions and ECS Exec access.
-- [System overview and boundaries](system-overview.md) - Maps the ROSA Boundary CLI, AWS identity, investigation Lambda, Fargate runtime, persistent and task-scoped storage, and verification layers by responsibility.
+- [System overview and boundaries](system-overview.md) - Maps the ROSA Boundary CLI, AWS identity, investigation Lambda, Fargate runtime, persistent and task-scoped storage, and the two independent scheduled reaper Lambdas by responsibility.

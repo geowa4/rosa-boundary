@@ -10,10 +10,10 @@ sources:
     resource: repo://internal/cmd/start_task.go
   - id: openwiki-source-253b57ec87256e726a724093
     resource: repo://lambda/create-investigation/handler.py
-generated: { by: "opencode", at: "2026-10-09T17:13:47.426Z" }
+generated: { by: "openwiki/0.7.1", at: "2026-10-15T16:03:34.007Z" }
 verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-09T17:13:47.426Z
+  - by: openwiki/0.7.1
+    at: 2026-10-15T16:03:34.007Z
 ---
 
 # OpenWiki quickstart
@@ -22,8 +22,8 @@ Use this page to find the part of ROSA Boundary that matches your question. This
 
 ## Find a topic
 
-- **How the pieces fit together:** [System overview](architecture/system-overview.md) maps the Go CLI, AWS Lambda, Fargate runtime, persistence, and test boundaries.
-- **Create, run, replace, connect, or close an investigation:** [Investigation lifecycle](workflows/investigation-lifecycle.md) follows state through the CLI, Lambda, ECS, EFS, and timeout reaper.
+- **How the pieces fit together:** [System overview](architecture/system-overview.md) maps the Go CLI, AWS identity, investigation Lambda, Fargate runtime, persistent/task-scoped storage, and the two independent scheduled cleanup Lambdas (per-task timeout reaping and whole-investigation garbage collection).
+- **Create, run, replace, connect, or close an investigation:** [Investigation lifecycle](workflows/investigation-lifecycle.md) follows state through the CLI, Lambda, ECS, and EFS, including per-task timeout enforcement and stale-investigation garbage collection.
 - **OIDC login, Lambda authorization, and ECS Exec permissions:** [Identity and access](architecture/identity-and-access.md) explains role selection and session-tag ABAC.
 - **Build or troubleshoot the container and its startup/shutdown behavior:** [Container image and task runtime](runtime/container-image.md) covers architecture-specific builds, runtime identity, entrypoint setup, and S3 sync.
 - **Understand AWS resources or Terraform constraints:** [Regional runtime infrastructure](infrastructure/regional-runtime.md) describes ECS, EFS, IAM, audit storage, Lambda, encryption, and Bedrock resources.
@@ -39,4 +39,4 @@ The operator CLI obtains OIDC-backed AWS credentials and invokes the create-inve
 
 ## Evidence-backed claim
 
-- The CLI passes task-start requests to the create-investigation Lambda, which provisions investigation state and can launch an ECS task; Terraform defines the Fargate task and its supporting resources. [CLI request path](repo://internal/cmd/start_task.go#L90-L104) · [Lambda dispatch](repo://lambda/create-investigation/handler.py#L243-L281) · [regional task definition](repo://deploy/regional/ecs.tf#L62-L82)
+- The CLI passes task-start requests to the create-investigation Lambda, which validates the operator, provisions or reuses an investigation EFS access point, and can launch a Fargate task using a per-investigation task definition derived from the regional task definition. [CLI request path](repo://internal/cmd/start_task.go#L90-L104) · [Lambda dispatch](repo://lambda/create-investigation/handler.py#L175-L281) · [Lambda access-point and task launch](repo://lambda/create-investigation/handler.py#L676-L999) · [regional task definition](repo://deploy/regional/ecs.tf#L62-L82)

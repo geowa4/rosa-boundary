@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:9c4353a5b118113649188a43c0eb3ff3236bb9d292762fd1a1c3ef22232ff933",
+  "pageVersion": "sha256:212600f96b2b399990ddc8beb0cc28ef9e6757e94dc2d0769aa0b097f99304af",
   "claims": [
     {
       "id": "claim_6ef5e4d7ea474a2fad1b1d89048ab5ac",
@@ -93,10 +93,64 @@
           "version": "repo-lines-v1:sha256:48cb1be86c57fc1210739bdf7dde64ebad47bec5479a9fdec6e7b433f6f8d29a:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxNGMzYmVmMTdhY2FkNTJmMmY4MTVhOGIxYTQ4NWU2ZDhlZjZjY2ViMjhlMDUyOTc1MTVkOTA1ZGI5ZWQ0MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0N2UyOTJlYzhjM2UyZDBlZDQwMGYyODRkMjk5ZjczMDRhOTMyNDU5NjU1MWIyZjI4ZGMzNGRlNjVmODg3OTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwMWM4MDY1ZGQxMzhkMDA0MzliYjZkYzQ0Y2Q2MTQyMDVhYmU0NThiNzEwYTZkZTEzMzA3NmUyYmNhYzdjMjMifQ"
         }
       ]
+    },
+    {
+      "id": "claim_0419dc8389494312bf1b7e0a297ee149",
+      "statement": "The reap-investigations Lambda has its own CloudWatch log group `/aws/lambda/<project>-<stage>-reap-investigations` governed by `log_retention_days`, and logs scheduled staleness-check reasoning (running-task counts, grace-period age using GRACE_PERIOD_HOURS), per-investigation EFS directory and access-point deletions, task-definition deregistration counts, and a final checked/reaped/skipped/error summary; its S3-related error logging deliberately omits file paths and object keys, logging only error codes and cluster/investigation IDs.",
+      "evidence": [
+        {
+          "resource": "repo://deploy/regional/lambda-reap-investigations.tf#L1-L9",
+          "version": "repo-lines-v1:sha256:41de397423e0ab8f0b5cfceb3b27d583bb1664718285a574763dbea7c2061a3d:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzk1NzE3ZmUxZDViNTZhOTUwZGY0NDE1Mzg4OTcxMDE3YjcwNGI4YWViY2UyOGRkY2U3YzU2NjIwODcyYTI3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWFmODU1ZGYzMDY5NDYxOGRjMmY0YzFiYmQ3MDJhMjYwZjEzMzhlZDExMzI4MTdkMjVkMGUyOWNhYmQ5MGE2MiJ9"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L104-L249",
+          "version": "repo-lines-v1:sha256:ac2a1aa65ec38ed5b2881fb109d788efb9718c90e4e7d46a81c5f56c39cc676b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2ODBiMjY2MjMzYmYzZWUzZjg4NGY1NTc4OGE1Mzk3NTBmZmMzNmUwNGI2NWY4MWEyMWVmMGIxNGJhMTk3MzNiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyMDc3YmY5NjM2YTNmZDc4ZmM3ODcwOWFkYjgzMzVmODgxMjQxZDNmOTdlMTE3YWFkOWY5MjcwYzExNGI4Y2NhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3ZTM5Y2UyZjdiYjg3NzcxMTg1NWU0Yjc5MWNmNjIyZTNkOTdmNzFlMzJjMDQ1YTllNDk4ZjRjZGM4OGQ1ZjUxIn0"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L639-L648",
+          "version": "repo-lines-v1:sha256:91b1b233e0b68874b5fdf163c0340ed8bfad8aabe8e70c09f5eea0ee4e739646:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkY2FmYjYxZDE4MDhhMmU5MGM2YzEwYzY1ZmExMDNkOTg3ODk2NThmYWQ0YjY5NjI4OTg0NTZiODQwM2UzNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5N2M3MTI0N2FmM2NkMWVkZjU1NWE3ZDEwNzU5MzE1N2Y2ZGMyYTIyYWYwZGU4MmU3Nzc0YWJmMTBmOGFkZTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZTUxZDU0ZjllNzkwY2RjZGJlOTE1Yzk2NWI5MWEyNDcxZWJlNjgwNTlmZDZhOTUxY2U4ZDJhY2M5MTAzNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlOWNjYzAyOGFlMzQxN2RmYTRjNWZhODM5NTk4NzQwMjgwOGFmMzRiMmRjYWQ0NDc4ZWZkOGY2NGI1NDc4YmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4ff18a7ce6dc40ef9855573c180271ba",
+      "statement": "Before deleting a stale investigation's EFS directory, the reap-investigations Lambda uploads a best-effort backup of that directory to the audit bucket under `<cluster-id>/<investigation-id>/reaper-final-backup/`, reusing the `.config/ocm/*`/`.kube/*` exclusions and symlink-skipping behavior of the container's shutdown sync; it refuses to delete the directory if the backup fails or times out, so the backup-then-delete ordering is an invariant rather than best-effort cleanup.",
+      "evidence": [
+        {
+          "resource": "repo://deploy/regional/lambda-reap-investigations.tf#L96-L125",
+          "version": "repo-lines-v1:sha256:eb1efeaa993ca0114672badfa6ad77d0074871bd848c6db604d66db58c765a80:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjNWE3NTQwZDVlMjU4OTE1Zjk0MzJiZjdiYzY1MDcyNzllOGExNTQzOGQwZDc4NGRiZmQ1Yjg4M2UwMmE5OGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZjk1ZjJhMmZmNDU0NDJlMTM1ZDA0ZjY2ZmIyNTRiYTcwMTBlZTMyYmU4YjNhY2EwMDI3M2UxNzdkMDlmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiMDI5MjI5MDdhNzllMWIxM2U0MzM0NWZjYTU4NGVmNWQyODVjNGFkZDI5MTY1MGU0Y2VlMjY1MzAwYTgyYWIifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L580-L637",
+          "version": "repo-lines-v1:sha256:5c37ba9ad5d7ab99b21940535bf0cb78fd13ccf7de589a906c0ada02cd93364a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMjY4NGRmNWZhMTZhMzhjODZmMzM3NzljMTFjNjYwZTkxYzdlYzBiYzcyM2MyYWUxYWE0MTRiMDM5N2UwMzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMDQyNGJkZTNhZDkxZmY4ZGFlYTgxYTRhYTUwNGIyZmU5ZDM3OTIzZjU5Mzc5MTUyZDU0M2Q3YjRkZWFmNzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4ZmE5ZjAxODJkMjBlNThkYjg1ZTIwZGFiMjkwOWY2MGQwMGVkMzBlZTVhNTdhMmE4ZjZkZGZlNGExYTcwMTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlY2Y0ZWZmZThmNGFlMGUzYTMxZjI3MTI3MGI3NTYyNjRjMWNkMjg5NTk2YjNmNWViOTViOTc5NjYxMmJlMzQifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L660-L710",
+          "version": "repo-lines-v1:sha256:c374cd877fd5986a085bbb70a1089b7215a5cb72802867131f6a7870b6d6e94b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ZDkzNDMyYzYwOTkwNmU5YmE1OWE2NzMyYjljMzNmYjQ4MTA3OGVkM2RhOGYzY2RiMDI4MTkwNTY5YjJhNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5N2M3MTI0N2FmM2NkMWVkZjU1NWE3ZDEwNzU5MzE1N2Y2ZGMyYTIyYWYwZGU4MmU3Nzc0YWJmMTBmOGFkZTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5OWVmZWRmZDJkOTcwNmQ4OTFjN2JhOTgzZTdmODRlMDVhZDBlMDE5MWMxMzI3OThiZTVlM2MxY2M1MzA0MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjNTZiMDk5MGU2OTA3YTUwODY5N2U1MDUxMGY2MTZlNmE4OTBiMmE5YTZhMjlkODEyYjE0NDRkNmQyNWE1YjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a33cd408b3584a1487f4de6a10853e81",
+      "statement": "The handler's own GRACE_PERIOD_HOURS fallback default (used only if the environment variable is unset) is 72 hours, but the deployed Terraform default for the `investigation_grace_period_hours` variable that populates that environment variable is 168 hours (7 days); operators should confirm the deployed value rather than assume the handler's internal fallback applies.",
+      "evidence": [
+        {
+          "resource": "repo://deploy/regional/lambda-reap-investigations.tf#L191-L199",
+          "version": "repo-lines-v1:sha256:de5f5418bd11944cab41689343f448070214ec1862754cf7353e1603be34e176:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTEyYWIwOGQ5NWNiMmYwOGVmYzFhZmMxMzU3ZmMwZTJmNDI4ZmQ2NDc3NDBhYjM1NTQ0Njc0NTU2YTBlZWQ4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDBiY2Y1ZGU4OTFhNmY4ODAyZTNmMzQ1NTJlNjVhYzBkOTFhM2EzNjczMDEwMDRjNGFjNWRjZTk0MDI2ZWRkYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzZhMjdkMzkyNTk4ODQ5NTM4MzY4MTU4OTA0NDdhNmQwMDk1ZTAzZThmYzY3MDBiMDU5N2Y3MjkzMDRmM2ZjMSJ9"
+        },
+        {
+          "resource": "repo://deploy/regional/variables.tf#L413-L422",
+          "version": "repo-lines-v1:sha256:c17d1975e12bfd74c8ea00b55d9d28a8add2aeae5fa0c712118f5349fa269a9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1N2Y2ZGEwNmNmMzljODBhOWE5ZDNiNDI0ZTA2Zjc2NDMzYmI2MmYzNjQ4MjNjZTA3ZjcyYTM3OGI0OTVhYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/handler.py#L43-L47",
+          "version": "repo-lines-v1:sha256:a5b9c8b6892c76a6c1beae057628f6adc6df94639c7900a729dc1a5a372b3fe6:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjNjMDI3ZTQ2MTYwMzMxZDJkZGRhMWJhMDlhNzViOWE5MDZlYmMwYmQzNTgwNmMwMTliZDNkMjg5ZmI4YWIzMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDE4YjJjODI0NGUxOWIxNGMyYjg0ZDc1NzM5MjEyOTU3ZWEyYTIzMWI3NzBiZGRmYzc5MzNlZjA2N2JhZTI4ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTNmZDgxMWFhN2QwZGUwMTUwNmEzZmZlZGQ1NTY3NTA2ZTE4YzU0ZDFmNGM0OWJlNzY5ODYxYjU0ODFlYjAxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGE4ZmY0NzM4YThjMGNlYjI5MGRkODMxNmJhNDM4YjljNjUzMTk5ZWNkMjk5ZmE4ZTFiNDA1ZWI0Yzg3MDgyYSJ9"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-09T17:13:47.426Z"
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-15T16:03:34.007Z"
   }
 }

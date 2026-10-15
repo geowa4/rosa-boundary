@@ -1,28 +1,48 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:98d2c5e774e1796c0225db297622f7bd6bb3b11eb054ea04cee315f165c8b97b",
+  "pageVersion": "sha256:090a9e584e9837d265194547d425a2cbaece63de8a7f29ebdb4323b7b14a5f6c",
   "claims": [
     {
       "id": "claim_55b66afc53074753b90d8fe95bdc07fb",
       "statement": "The root Makefile separates Go, Lambda, build-helper, and LocalStack test targets; fast LocalStack mode requires an existing endpoint, and full mode starts and shuts down the stack.",
       "evidence": [
         {
-          "resource": "repo://Makefile#L130-L168",
-          "version": "repo-lines-v1:sha256:ea19d60e83a7333d11bfa9a9fc34e86a69e62f54576301ba8fc3a1a03b8cf4a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjN2EyNTRlZjQ0YjM1OGMzOWExNjgyNjUxYzY3MzMyNjVjYTVjZjI4OTM4MWQ2ODkzOTBlYzkxMjQxNTcxYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ZmZjZDQzMTY5NTRlM2FmZDliY2QwNGI1NDFkZjMzNTE1NmQ4MzU3YzI0MGQ4NDYwMDUzNGY0ZWRiOWQ0ZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjNmUzZmQzMWM5NzdiMGIxODNhMTU3NzIxZTMzZDNjNDdlYWQyMmFlYmFkYzdiMGZjZGUxMGY1OWU3NDk4MDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1OTk2MmRhM2MyNjM0M2Y0MGFjZDJmMDIwMzQ3ZTQ5ODdhYmNmYTczM2NmZDg5YTU2MTFhMmYxNDk0OTlmMzgifQ"
+          "resource": "repo://Makefile#L117-L132",
+          "version": "repo-lines-v1:sha256:b12ebe3dc0af257f46cebb7c64dabef5ab412ab9ff6a0889a416d7bae0949c27:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwNjA4M2EwOTUyYTZhOWE0YTM0MDQ5NWE5NDk0OTgwMDE5MTA1OWNkZWIwY2EyYjlhN2NhNmI4NzYyMGUxNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMDczNWMyNGMyYzY5ODY3OWI3MDIxNDVkMmFmNDEyZmY5MTFlY2ZiNGFmNmQ4MDlmNGY5ZmUxYzUxNGMwMWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzOTNlNmRiZTdlM2YwY2JhMjBjZjRlMjJmODI3YTk5ZTk4NDg5NjgwMGU5ZmUwNzhhMDcyYWYxMTlmYWMyZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3NDEwNzU0OTIyY2MxODIzZjUxZWEzNzJmNzlmNzFmMTQwMGE0OTBiMjkxMDZkZjhiYzI5ZTEwZjIxODdiNWMifQ"
         },
         {
-          "resource": "repo://Makefile#L70-L128",
-          "version": "repo-lines-v1:sha256:966f0fe4f983bd58fcd5dda3ecb83adfcdddf7b7bf4d966701b982651c58940e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmOGZmNjgxNWU2Mjg5MjJmM2RiM2M0MzllNTA5MTVhODk1MzViYmRiNWZiMDBmZWE4ZWMzZjE1MmQ5MWRjOGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMDczNWMyNGMyYzY5ODY3OWI3MDIxNDVkMmFmNDEyZmY5MTFlY2ZiNGFmNmQ4MDlmNGY5ZmUxYzUxNGMwMWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1M2JhNGViMzI2NmU4MWVjZmVmOTg0ZjUxNjEyNTRmOWU4MDVmYWRmNjJmOWY1ZjA2N2MwMzkwOGRmMjYzYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3NDEwNzU0OTIyY2MxODIzZjUxZWEzNzJmNzlmNzFmMTQwMGE0OTBiMjkxMDZkZjhiYzI5ZTEwZjIxODdiNWMifQ"
+          "resource": "repo://Makefile#L135-L143",
+          "version": "repo-lines-v1:sha256:8f229a3056f43fec087b0c2889ede8e2faf29d58ca7fd919dc57061e457cc7fb:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjJhNmQ1MTNkY2QzOGJkZmMzYmM4ZTY3M2U2NDBkMWNkYWUxOWIxMTFkOTI5MmQ2M2E2MGQyMjMwZjc0ZWE1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODYxMzU0YzQ2YWNkODE2MzBmZDlhMWY1NTExZGRmNmIzZWIzYzMyZTBiZGMwYWIzOGYwMzM1MjVmNGNmZTFlYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDQzNjBhZWI4Yzk5ZTBhMmM5Yjg4MTNhMWVmOGM5NDJmNGFhYmUyYTZkMjRmNzg1ZjVjNmM0OGJkOGFmNDU0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTE4NjAzYWQxODc4N2VkMjliZTQ1ZWUxNmM1ZWVjMzA1ZDNmN2E2MWU5MmVhY2IzMTc4ZGQzOTExMjk1ZGVjOCJ9"
+        },
+        {
+          "resource": "repo://Makefile#L164-L172",
+          "version": "repo-lines-v1:sha256:05b209b9470b25a5d9007d072ed5d539c815f5ddcd682cdd330f84fe2132af22:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDlmYzdlODM0MTdmMTZmMzQ5YTg0MGJkNzhiMDg0NTZlZTk4M2YyZTY3MTYyYTVhMzAyMmIwYzAxMjEzYjFiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzVmZmNkNDMxNjk1NGUzYWZkOWJjZDA0YjU0MWRmMzM1MTU2ZDgzNTdjMjQwZDg0NjAwNTM0ZjRlZGI5ZDRlMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTgzYjc3Y2RlNDMxNGRjNTVlMzlhYmQ1NjllYWQyMjA4NGU2NGUxOTdhOWZiMmMyZDJkZmU3MTViZGEzOTE4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU5OTYyZGEzYzI2MzQzZjQwYWNkMmYwMjAzNDdlNDk4N2FiY2ZhNzMzY2ZkODlhNTYxMWEyZjE0OTQ5OWYzOCJ9"
+        },
+        {
+          "resource": "repo://Makefile#L70-L108",
+          "version": "repo-lines-v1:sha256:356b74febcc099ab290e72b819952e0ed01a083ea95a23ed8c3818bc64cdea17:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmOGZmNjgxNWU2Mjg5MjJmM2RiM2M0MzllNTA5MTVhODk1MzViYmRiNWZiMDBmZWE4ZWMzZjE1MmQ5MWRjOGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1MDhmYjMyNWIzZGJkMTA4M2RkMzdkY2Y4MzJkZTExMjAwYjc3NmUyOGNmNWExMWE2NjBiYWVkNTVjMTg5ZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1M2JhNGViMzI2NmU4MWVjZmVmOTg0ZjUxNjEyNTRmOWU4MDVmYWRmNjJmOWY1ZjA2N2MwMzkwOGRmMjYzYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkNjNlOWE5OTFiMDVlNzI3OTQwYmMyZDFkODI1Y2VlYThiOTNmOTNkMDQ0ZTM2ZjdiMjUyZjNiN2ViM2JjZGYifQ"
         }
       ]
     },
     {
       "id": "claim_82e2913944aa44319de555420787389e",
-      "statement": "The investigation Lambda unit suite runs with pytest, the reaper suite runs with unittest, and the aggregate Lambda target runs both suites.",
+      "statement": "The Makefile defines three Lambda unit suites: the investigation Lambda suite runs with pytest, and the reap-tasks and reap-investigations suites both run with unittest; the aggregate test-lambda target runs all three. The reap-investigations suite covers staleness/grace-period detection, EFS access-point and directory cleanup, ECS task-definition deregistration, and identifier/path-traversal validation.",
       "evidence": [
         {
-          "resource": "repo://Makefile#L118-L129",
-          "version": "repo-lines-v1:sha256:e5ccec080102322acd5839b5eddf583fc91293f111f2e99340ece53aa228ba8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0NDI3Mjk4MGQ0ZjMwOWZmNGE0MDFkMGMyNWY4ZGJlMWE5ZDcyOGYyODFhNTg5OWQ2MzQ1YmI5MTdkOGM4MGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwNTdjYWNhZmQyZmQ2Y2U4ZWJiMzU3Yzc3Y2MxZWUzMzYzMWZkZDExZmNiMmMzMzYzZGU5YTdjYTFlYzgzYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkNjljNjM0YjYxZDRkZjVkMDc2NTNlOTM5NTM0OTU5ZDcwNzM2YTRkYjg4ZTMwMzUwYTMwYjhkNGYyMzE0NzAifQ"
+          "resource": "repo://Makefile#L117-L132",
+          "version": "repo-lines-v1:sha256:b12ebe3dc0af257f46cebb7c64dabef5ab412ab9ff6a0889a416d7bae0949c27:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwNjA4M2EwOTUyYTZhOWE0YTM0MDQ5NWE5NDk0OTgwMDE5MTA1OWNkZWIwY2EyYjlhN2NhNmI4NzYyMGUxNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMDczNWMyNGMyYzY5ODY3OWI3MDIxNDVkMmFmNDEyZmY5MTFlY2ZiNGFmNmQ4MDlmNGY5ZmUxYzUxNGMwMWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzOTNlNmRiZTdlM2YwY2JhMjBjZjRlMjJmODI3YTk5ZTk4NDg5NjgwMGU5ZmUwNzhhMDcyYWYxMTlmYWMyZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3NDEwNzU0OTIyY2MxODIzZjUxZWEzNzJmNzlmNzFmMTQwMGE0OTBiMjkxMDZkZjhiYzI5ZTEwZjIxODdiNWMifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/test_handler.py#L56-L213",
+          "version": "repo-lines-v1:sha256:6c43d90d46c96a68ed82dd7a333462e4812a0489440cfe67cbbd10b7a764187a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhOWJhYzQ5ZjZjMDkyNjJmZDJiYzY0ODM0MzdiMzA1ZDZiYTI1M2RmMzM5ZTJkNjM1YTBhZTFlZTJlNGVlMjdiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlZTczNThlMTBiNzgzMGI3NDQ5OGYwMjQ4ODE0OGUyMTkyZDAwN2VkYjFmNWM4MWExMjMwMGM4ZjFjNjEyYzg1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzMzk4ZDQzMDkxZDk4ZjI0OWVkNmRlNWFhMTk5NTNhZWNmZmNjOTJlZmUzOWYxODg5YjRlNzZkNzg3ZWRhMjk5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlYjMyNTJlMmY3NjY1MmMwN2Q2MGNiZmJmOTQ0YzZmMWQwYzZmNGQ0MDE5YWRkMDhlM2JjMGIwZGE0ODdiMjA4In0"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/test_handler.py#L636-L692",
+          "version": "repo-lines-v1:sha256:4cbcd94567b83a5c4e967a0b470336816cdf5b33896aec9145b504faa6f81d04:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3OWQxMzZkMDYxOWNjMWJiYTZkYWM1OGRhMzJjY2RiNDgzMjRiODdkOWMxYTY0ODQxZDg5MGIwMGY3OTZkMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2NmZjYWNiNDYzOWVhMzUzMWY3MTZiMGUxZTBkOTVlMzQ2MDNmOWI5ODdlYjE5Y2IyZDczNDVkNmIzYzk5YzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiODMwZGRiOGFlNGY3N2ZmN2UzOWRlNTg2Mjc2YWI1MWE1MDNmM2NmNGQwMGE3ODg1YjI1NTIwNDcwZjUzZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiOGM0NjM3YmQxN2U3YmU0ZGI4YzJmNjhlMDU4ZTdiYTRkNWQ1YzI5YmE0MTNkZTA4NmEwYmNiMTY4NjBmM2IifQ"
+        },
+        {
+          "resource": "repo://lambda/reap-investigations/test_handler.py#L840-L1015",
+          "version": "repo-lines-v1:sha256:f1ba068fddaba9d5b87d491ceeea1dd4e7c24c908e1b5334a77270b33a1f8c23:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3NWFhYjE4NDU2N2JhOWVjOGNiMjY2MjcxOTZmM2I0MzRhMjRkMzViZmVlMWZmOTI0NWVlZmMxZGIxYmZhNjIyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxM2RlNjVmNTgwYmYwMDljMzllMTE4Mzk0OTlmNjk5YjBhOWMzNTRjYjJmOTkyZjBiYjgyNDk5MTczZDg1YzBlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3OTc3YWUwMjkzNzdlY2NkODM5ZjI2NWU5MDc2NTQ4NzYzOGU5YTY5YTUxOTkzYTAzZTliNWVkMzEzNTE4NTJmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4NzhkNDNhNjY1N2U1ODIzYWYwZTZmY2UwMGQwY2QzOGYyMmIyYjUzZWI0OTgyOWZhZDEzMzk0ZTliYzRkNWE0In0"
         },
         {
           "resource": "repo://lambda/reap-tasks/test_handler.py#L8-L35",
@@ -35,8 +55,16 @@
       "statement": "LocalStack fixtures wait for the health endpoint and configured required services before constructing AWS SDK clients against the local endpoint.",
       "evidence": [
         {
-          "resource": "repo://tests/localstack/conftest.py#L21-L99",
-          "version": "repo-lines-v1:sha256:471b3f5725d585c0b1fcb247ebcf1b5b6d599b8a42398291abec963c5cce0326:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViMTZkYTg2MTMyZTEwYjQ1YzQ4N2JhOTIxODNlMzA4ZjEwYjYwODlmMDllZTRmYzhiNjgwZDZiNDBmNzFhNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1YzFjNDYyZTJhMzlkNzQ3NTlmNWUxYjEyNmY3NjgzYTJiNzMwMTE4ZTE4ZjUxMjJiMDhjZWRlZWI2NTBlMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxYzE0MjZiZWE3ZmFiYTA1YTEyYzFlMWM4NjBkYTY3YzYxNzM4ZmZjY2NjYTRmNjc2ZTRiOTI2ZGVhNjZlMDIifQ"
+          "resource": "repo://tests/localstack/conftest.py#L29-L51",
+          "version": "repo-lines-v1:sha256:92fcf2aa142db4e6a57841084c63d8585ab569a529a8d7851559e62da9e6feca:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZTI3NTY5ODczYjJiYzlhOTcwYjRmNDQxZmRiYTVkYTg0YTM3MTE2Nzk5ZGYzNGFiNGFjNWQyYzU2NmQyNDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5NjJhNmQ4ODZjMjRiZTk1ZDBhODZjNWQ4ZGZhZjBkNDlhMGUxOWM5ZGFiYzk1NjI0ODM0OWJmNWZmOGRjODIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4NWE0NTE2OGFkMzM5ZDI3MzZiOWMyOTUzZTllOWY0M2RkMDJiNTI0Mjk1ODE4ZGU1MDZhYTkyN2JiZjE1YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0Y2ZmMGVjMmMxMjg2MDUxNTQ3YmU5NDk3MzMyZjU1YTJjZWFkOTczMzEyYWUyODljMDlmOTc4NjY2MmFiOGUifQ"
+        },
+        {
+          "resource": "repo://tests/localstack/conftest.py#L54-L63",
+          "version": "repo-lines-v1:sha256:620cb4f784f6557e0ebaee9a020f87d1572554e0e200c876627dd1b19f2d131f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZTI3NTY5ODczYjJiYzlhOTcwYjRmNDQxZmRiYTVkYTg0YTM3MTE2Nzk5ZGYzNGFiNGFjNWQyYzU2NmQyNDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZjgzNzBmNWI3MWM5ZGZlYmU0NGYyMWQ5NGYzM2MwMDgyNThmODQ0Zjc5YTE3NTI4YTIzNDg2MjY4Y2E5ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0Y2ZmMGVjMmMxMjg2MDUxNTQ3YmU5NDk3MzMyZjU1YTJjZWFkOTczMzEyYWUyODljMDlmOTc4NjY2MmFiOGUifQ"
+        },
+        {
+          "resource": "repo://tests/localstack/conftest.py#L66-L171",
+          "version": "repo-lines-v1:sha256:002cf1ef43869dc31767bc3c3ae2c695e39fa2ed3a8938048e928babd589cc30:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkZWUyNzU2OTg3M2IyYmM5YTk3MGI0ZjQ0MWZkYmE1ZGE4NGEzNzExNjc5OWRmMzRhYjRhYzVkMmM1NjZkMjQzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzMGMxZjE4OGYxNDJlZDdhODI0NjgwYjIwNzE3MmM1NTE5YmM2MTRhNDhmZGE3Y2YxNjdlZGI4ZGRmNzk5NTZjIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4Y2M0YTdkMWNjNzk2YWJhM2U0NjcyMzMyN2Y1MTdlOWY4MTE5ODJkMjUwZjA3MDI5ODZlNGI1NzY0YWQ5NTg5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1NGNmZjBlYzJjMTI4NjA1MTU0N2JlOTQ5NzMzMmY1NWEyY2VhZDk3MzMxMmFlMjg5YzA5Zjk3ODY2NjJhYjhlIn0"
         },
         {
           "resource": "repo://tests/localstack/required_services.py#L1-L6",
@@ -46,15 +74,15 @@
     },
     {
       "id": "claim_0ecfad2fe82a4be4a8ecb8b85c9c103d",
-      "statement": "Local LocalStack compose uses the local ECS executor, which causes slow task-dependent integration tests to skip; the Prow runner sets a Docker-compatible ECS executor.",
+      "statement": "Local LocalStack compose uses the local Lambda and ECS executors, which causes slow task-dependent integration tests to skip; the Prow runner sets a Docker-compatible ECS executor.",
       "evidence": [
         {
           "resource": "repo://tests/localstack/ci-run.sh#L64-L85",
           "version": "repo-lines-v1:sha256:025e91f20c75d4229b912d47e5b87c670125e96f635887e385080ac6718a5235:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmOWE1YzllYjFhY2U3ZTY2MGNjMjM5NmM1ZjVlZGMxZDU2NDUyMjgzNWQ5YTk1ZmJjZTE0N2FhNmIyMzA4ZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlN2ViMTA0NjEzMzgzM2I0YzBiNGFlMmE0NmM0OGZmNTE2ZDllNmU4YzIyZmQxNjRhZDMzZWFiYzNmYTE4NTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4YjgwMDhmMWU4YWZjMmUwM2U0MmIwOWRiMDZiNjVhZWVhNDYwZGQ1MWY1YzYwZGYyYjRkNDk0N2Y0NzA0MmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3MzI2MGEwNzhiNzZkZjlmNTEyMmExOTU0OTM2ZTI3NWI4YjdhMjhhOTI4YzQ0N2JiN2JhNTQzOTdlZTJkMzQifQ"
         },
         {
-          "resource": "repo://tests/localstack/compose.yml#L1-L24",
-          "version": "repo-lines-v1:sha256:49a506d9055cf4d9444bb26f70389499436760ad65cb032182bd5e8e8fb85e8e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyOWM5NzE0Zjk2YTBiNzI5MTg0MGMzMDE5NWRhMjg1N2I1ZWIzNjYwZmYyNmFkMWQyMzk2YzI5ZmNhZjgzZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3NGZiOWZmNzU3NDQ3MjAzN2MzMWYwNjYxOWVlM2JkYzgxODM0N2ZhN2Y1MDc1NzBkZjlhNWY5MGU1ZTVmOWUifQ"
+          "resource": "repo://tests/localstack/compose.yml#L1-L27",
+          "version": "repo-lines-v1:sha256:d6512f777116560bd9125c190d9540f84324ec999f413fdce7fef3a9b74ba7c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyOWM5NzE0Zjk2YTBiNzI5MTg0MGMzMDE5NWRhMjg1N2I1ZWIzNjYwZmYyNmFkMWQyMzk2YzI5ZmNhZjgzZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3NGZiOWZmNzU3NDQ3MjAzN2MzMWYwNjYxOWVlM2JkYzgxODM0N2ZhN2Y1MDc1NzBkZjlhNWY5MGU1ZTVmOWUifQ"
         },
         {
           "resource": "repo://tests/localstack/integration/test_task_timeout.py#L16-L78",
@@ -110,7 +138,7 @@
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-09T17:42:13.086Z"
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-15T16:03:34.007Z"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3d1ea189b00afb5d9dce5fd9a32ac48dc8f09bb7b824d8112639ae93f8809763",
+  "pageVersion": "sha256:7b6d7eb691f6e1d5c71a415ecf5c2016618a096fbb8bf3fd1c3b2a0f41d1bd7f",
   "claims": [
     {
       "id": "claim_7ea425ebadf04e7894f3f138062be6b4",
@@ -104,7 +104,7 @@
     },
     {
       "id": "claim_13635579e11e447686423869cb676568",
-      "statement": "The AWS-credentials stack uses providers bound to the staging AWS account and HCP organization while the network and regional stacks guard against running in the wrong account.",
+      "statement": "The AWS-credentials stack's `aws` provider is guarded to the staging account (`allowed_account_ids = [\"150100906299\"]`) and its `tfe` provider targets the `hp-platform-engineering` organization; its `aws_dynamic_creds` module's `role_groups.default` allowlists the four `rosa-boundary` project L3 workspaces (aws-creds, account, network, regional) plus `rosa-trusted-actions-stage` under a separate project, while the network and regional stacks independently guard against running in the wrong account via their own `allowed_account_ids` provider settings.",
       "evidence": [
         {
           "resource": "repo://deploy/network/main.tf#L1-L18",
@@ -115,8 +115,8 @@
           "version": "repo-lines-v1:sha256:817fa4b168b1cb082441c6400df86d2dae35fc5b87ae863b338517d52f9d5dc0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjNjE2MWZiZmU1YjM2ZTA4MGFhOThlMGI4MDQzNGIyZjUzNDczN2EzMzEyYmVhYWNkYjkxMjU5OGYxZDUwZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhODQ5ZTY4ZTU3NzlkOTdlOGE4OGNhNzMzNjE1Mzg0Y2IyNDgyMGI4MzNmNWE0MThkODA5NzM5OGRjYmMwNjkifQ"
         },
         {
-          "resource": "repo://hcp-terraform/aws-creds/rosa-boundary-stage/main.tf#L1-L30",
-          "version": "repo-lines-v1:sha256:abfc0ef7e9058b67805bf0727aeb114c44ccc40eca180865ca9e913f19d9bdf4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjNjE2MWZiZmU1YjM2ZTA4MGFhOThlMGI4MDQzNGIyZjUzNDczN2EzMzEyYmVhYWNkYjkxMjU5OGYxZDUwZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhZTY3NzdhMDZkZjNiZDhiNWRkNGJlMzAyNDk1Y2NjYWRjMGY5YjBlODY1NGJlNTVjYmU0Y2U3ZGM4NTA3OTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3MjE4MzY3NTBmYjk4NzA3MzJlYjBhOTM0NzY4MjU0MGI4YTliYWY0NzcwZDVjNmIxZTVmNzJhMmVjYjJiMWQifQ"
+          "resource": "repo://hcp-terraform/aws-creds/rosa-boundary-stage/main.tf#L1-L51",
+          "version": "repo-lines-v1:sha256:f6fb97c5caf339382fbcb3e378146a4ba5914e63f49f1ad30513af2abb29940d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjNjE2MWZiZmU1YjM2ZTA4MGFhOThlMGI4MDQzNGIyZjUzNDczN2EzMzEyYmVhYWNkYjkxMjU5OGYxZDUwZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1YzliMmMzMzk0OTlhNTM4YzliZGM2YTUzOTM0YTRmM2E3ODAxYmNhYWNhNmY3N2M1MjJhMmE0NjljZTZiM2IifQ"
         }
       ]
     },
@@ -136,7 +136,7 @@
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-09T17:42:13.086Z"
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-15T16:03:34.007Z"
   }
 }

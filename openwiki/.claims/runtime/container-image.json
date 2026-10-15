@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c370e3109d6685e406e646a50dc1ed71a186f363405fe125082b493f4a33070f",
+  "pageVersion": "sha256:58015ce6f3c9739c6fa6f835e44f1764f795098c90659d4cfbc24e151b0a84f6",
   "claims": [
     {
       "id": "claim_dcc0df2d8d304d71876fefca31c6744e",
-      "statement": "The Containerfile uses a digest-pinned UBI 9 base, separates build/download stages from a single final image, and the root Makefile builds AMD64 and ARM64 variants that can be combined into a manifest.",
+      "statement": "The Containerfile uses a digest-pinned UBI 9 base, separates build/download stages from a single final image, and the root Makefile's build-amd64, build-arm64, and manifest targets build AMD64/ARM64 variants with Podman and combine them into a manifest.",
       "evidence": [
         {
           "resource": "repo://Containerfile#L1-L23",
@@ -15,8 +15,8 @@
           "version": "repo-lines-v1:sha256:5b9906972534b4aabf01b4601dbe67c6028926e86a1e56cfffb5eb5b2a65925d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzZWJmNWIzNGJkNmE4MmY1NDc1OGM0OGVjMDg4NzA3NmMxNTViZmNiYzc5NjIxZmU3YmVjMzI1YWQyNGUzMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmY1OTM1NGExN2ZiNjgwZTljMjE2YmZkMGQ2NjUxNGNjOTM0ZWFlZmU4MTU3MGNkN2U2ZjQwNWQ4NzQ0YzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlOGRjMDZlZjNlNWI4YWNmMGNjZGE5ZGIzM2NkYTVkZjk3MTllYmVhMzBmMTQ2ODQ4ZDQ1MjA1OGU5MWUyM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://Makefile#L24-L59",
-          "version": "repo-lines-v1:sha256:bc12f24cfc3d941421300febc35ea325c18541465a268c1eb46e22ced2d2ce17:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0NzRhZTAxOWRjZjdmNGU2MzJiNDJjZGEzYTRjMGIxYmU1MWRkYmVhYjVkMDE0NWI1ZDUxNDNmOTg0MzAyOTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0ZDMxNDdlMzcxMzY3ZjFiMDFkZjAwMTBlZTk5ZDlkYWIyNjc2NDA5MzU4MDEwZWNhYWQyMTYwOTcxNzAxYjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzZjE4MmMyNzIyYTk1OGJkMGQxYWM4OTU0M2Y4NWUzM2YyMzhhNDI4YTUzMTI1OGM5M2VkYWViMjJjYzI3MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0YmRiYmE2MDczNDlmNWJmNDgzYmJlMTY5ZjZhZDM0NjU3NTRjZDIyNGQ5ZmE2NGIxMmZmMTA0ZDFiOWIwOGQifQ"
+          "resource": "repo://Makefile#L31-L61",
+          "version": "repo-lines-v1:sha256:50d4b7bdd63bcba0013df81a272a59957341b499241817e83d15628101a751c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYTdmZDRjNmFmNGI2ZmRkODkyYTE0ODdmMzdjYzhhYzA4OGVjMmEyNGExODA5OGU2ZTcwYzEzM2E2ZWQ0N2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkMTI3MjAwY2I0NTM4YWU4Y2JiOWRkZTViYjgwYWQ2ZmQ3NjUyY2I5YWVmMTEyMzUwYzliNjg3ZTBjNjJhOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlODA5MzZiNzllZWVkMmQzYWE2NTg5NmQ3MzgzNzQ0NWY5MzE2ZDg3YjBlZTQwMGY3NzM3ZTJhZmExODA4ZjcifQ"
         }
       ]
     },
@@ -94,7 +94,7 @@
     }
   ],
   "verification": {
-    "by": "openwiki/0.7.0",
-    "at": "2026-10-05T19:18:44.075Z"
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-15T16:03:34.007Z"
   }
 }

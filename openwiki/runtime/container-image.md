@@ -18,10 +18,10 @@ sources:
     resource: repo://Makefile
   - id: openwiki-source-b696734e098932f3853bbb51
     resource: repo://tests/shell/entrypoint.bats
-generated: { by: "opencode", at: "2026-10-05T17:08:59.471Z" }
+generated: { by: "openwiki/0.7.1", at: "2026-10-15T16:03:34.007Z" }
 verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-05T19:18:44.075Z
+  - by: openwiki/0.7.1
+    at: 2026-10-15T16:03:34.007Z
 ---
 
 # Container image and task runtime
@@ -48,7 +48,7 @@ The bats suite sources the entrypoint without running it, checks that startup re
 
 ## Evidence-backed claims
 
-- The root Makefile builds separate AMD64 and ARM64 images and assembles their tags into a manifest; the Containerfile uses a pinned UBI 9 digest and builder stages feeding one final image. [build targets](repo://Makefile#L24-L59) · [base and stages](repo://Containerfile#L1-L23) · [final stage](repo://Containerfile#L167-L244)
+- The root Makefile builds separate AMD64 and ARM64 images and assembles their tags into a manifest; the Containerfile uses a pinned UBI 9 digest and builder stages feeding one final image. [build targets](repo://Makefile#L31-L61) · [base and stages](repo://Containerfile#L1-L23) · [final stage](repo://Containerfile#L167-L244)
 - The image build resolves architecture-specific assets and validates GitHub release assets against published checksums using secret-mounted credentials; tmux source is SHA256 checked before compile. [platform resolution](repo://build/platforms.sh#L115-L140) · [GitHub checksum verification](repo://build/github_dl.py#L187-L235) · [Containerfile download stages](repo://Containerfile#L47-L124) · [tmux build](repo://Containerfile#L127-L164)
 - The entrypoint rejects credential paths that are missing or EFS-backed, prepares them as mode `0700`, then runs the requested workload as `sre` while the root shell retains signal handling. [mount verification/setup](repo://entrypoint.sh#L46-L80) · [workload process and traps](repo://entrypoint.sh#L82-L93) · [drop privilege and wait](repo://entrypoint.sh#L167-L183)
 - Both normal exit and signal cleanup use a bounded S3 sync that excludes OCM and kubeconfig paths and disables symlink following; bats tests assert those protections. [sync and cleanup](repo://entrypoint.sh#L3-L44) · [sync tests](repo://tests/shell/entrypoint.bats#L88-L134) · [exit-path test](repo://tests/shell/entrypoint.bats#L176-L204)
