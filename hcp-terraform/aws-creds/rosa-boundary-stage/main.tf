@@ -42,7 +42,8 @@ module "aws_dynamic_creds" {
         }
         rosa-trusted-actions = {
           workspace_names = [
-            "rosa-trusted-actions-stage"
+            "rosa-trusted-actions-global",
+            "rosa-trusted-actions-stage",
           ]
         }
       }
