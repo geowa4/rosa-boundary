@@ -35,7 +35,7 @@ run "account_singletons_and_shared_contract_without_regional_resources" {
       output.shared_roles.task.name == "rosa-boundary-dev-task-role" &&
       output.shared_roles.sre_shared.name == "rosa-boundary-dev-sre-shared" &&
       output.shared_roles.s3_replication == null &&
-      length(output.shared_roles) == 8 &&
+      length(output.shared_roles) == 9 &&
       output.regional_iam_contract == {
         account_role_name_prefix = "rosa-boundary-dev"
         legacy_policy_region     = "us-east-1"
@@ -72,7 +72,7 @@ run "account_singletons_and_shared_contract_without_regional_resources" {
       alltrue([for f in fileset("${path.module}/modules/shared-iam", "*.tf") :
         length(regexall("resource \\\"aws_iam_role_policy\\\"|inline_policy[[:space:]]*=|managed_policy_arns[[:space:]]*=|aws_iam_role_policies_exclusive|aws_iam_role_policy_attachments_exclusive", file("${path.module}/modules/shared-iam/${f}"))) == 0
       ]) &&
-      length(flatten([for f in fileset("${path.module}/modules/shared-iam", "*.tf") : regexall("resource \\\"aws_iam_role_policy_attachment\\\"", file("${path.module}/modules/shared-iam/${f}"))])) == 3 &&
+      length(flatten([for f in fileset("${path.module}/modules/shared-iam", "*.tf") : regexall("resource \\\"aws_iam_role_policy_attachment\\\"", file("${path.module}/modules/shared-iam/${f}"))])) == 5 &&
       alltrue([for f in fileset(path.module, "**/*.tf") :
         length(regexall("terraform_remote_state|aws_ecs_cluster\\.|aws_efs_file_system\\.|aws_s3_bucket\\.|aws_kms_key\\.|aws_cloudwatch_log_group\\.|aws_lambda_function\\.", file("${path.module}/${f}"))) == 0
       ])

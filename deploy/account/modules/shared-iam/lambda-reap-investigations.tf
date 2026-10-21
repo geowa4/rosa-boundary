@@ -11,3 +11,12 @@ resource "aws_iam_role_policy_attachment" "reap_investigations_lambda_basic" {
   role       = aws_iam_role.reap_investigations_lambda.name
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
+
+# AWS-managed VPC/ENI permissions for the VPC-attached reaper Lambda. Attaching a
+# managed policy to an IAM role is an account-global operation, not regional, so
+# this common attachment is owned once here. The reaper's VPC wiring (subnets,
+# security group) stays regional in deploy/regional.
+resource "aws_iam_role_policy_attachment" "reap_investigations_lambda_vpc" {
+  role       = aws_iam_role.reap_investigations_lambda.name
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}

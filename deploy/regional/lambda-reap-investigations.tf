@@ -8,12 +8,9 @@ resource "aws_cloudwatch_log_group" "reap_investigations_lambda" {
   tags = local.common_tags
 }
 
-# Lambda VPC execution permissions (required for VPC-attached Lambda)
-# Regional concern: VPC deployment requires regional managed policy attachment
-resource "aws_iam_role_policy_attachment" "reap_investigations_lambda_vpc" {
-  role       = data.aws_iam_role.reap_investigations_lambda.name
-  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
+# AWS-managed VPC/ENI execution permissions for this VPC-attached Lambda are an
+# account-global IAM attachment on the shared reaper role, owned once in
+# deploy/account/modules/shared-iam. See account-handoff.tf for the migration.
 
 # Lambda permissions for ECS operations
 resource "aws_iam_role_policy" "reap_investigations_lambda_ecs" {
@@ -212,7 +209,6 @@ resource "aws_lambda_function" "reap_investigations" {
 
   depends_on = [
     aws_cloudwatch_log_group.reap_investigations_lambda,
-    aws_iam_role_policy_attachment.reap_investigations_lambda_vpc,
     aws_iam_role_policy.reap_investigations_lambda_efs,
     aws_efs_file_system_policy.sre_home,
     aws_efs_mount_target.sre_home # Ensure mount targets exist before Lambda tries to mount

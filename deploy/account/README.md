@@ -15,7 +15,7 @@ to exist.
 | Owner | Resources |
 | --- | --- |
 | Account | Execution, task, shared SRE, invoker, create-investigation Lambda, reaper Lambda, Bedrock logging and optional S3 replication role identities/trust |
-| Account | ECS execution managed-policy attachment and the two Lambda basic-execution attachments |
+| Account | ECS execution managed-policy attachment, the three Lambda basic-execution attachments, and the reaper Lambda VPC-access managed-policy attachment |
 | Account | OIDC providers, Bedrock budget and approved model agreements |
 | Regional | Execution Secrets Manager, task audit/Bedrock/Exec/logging/KMS, SRE ABAC/lifecycle, invoker, Lambda lifecycle, Bedrock log delivery and optional replication inline policies |
 | Regional | ECS/EFS/S3/KMS/Lambda/logging resources, regional resource policies and invocation logging configuration |

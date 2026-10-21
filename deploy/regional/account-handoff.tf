@@ -53,6 +53,10 @@ removed {
   lifecycle { destroy = false }
 }
 removed {
+  from = aws_iam_role_policy_attachment.reap_investigations_lambda_vpc
+  lifecycle { destroy = false }
+}
+removed {
   from = aws_iam_role.bedrock_invocation_logging
   lifecycle { destroy = false }
 }
