@@ -40,6 +40,20 @@ module "aws_dynamic_creds" {
             "rosa-boundary-stage-regional",
           ]
         }
+      }
+    }
+
+    # Separate from "default" so rosa-trusted-actions' plan role can carry a
+    # permission the shared ReadOnlyAccess policy deliberately excludes,
+    # without widening rosa-boundary's own plan role to match. apply role
+    # keeps the module default (AdministratorAccess) -- rosa-trusted-actions/
+    # terraform/ only needs a plan-phase addition, not an apply-phase one.
+    rosa-trusted-actions = {
+      plan_role_policy_arns = [
+        "arn:aws:iam::aws:policy/ReadOnlyAccess",
+        aws_iam_policy.rosa_trusted_actions_plan_secrets.arn,
+      ]
+      projects = {
         rosa-trusted-actions = {
           workspace_names = [
             "rosa-trusted-actions-global",
@@ -49,6 +63,24 @@ module "aws_dynamic_creds" {
       }
     }
   }
+}
+
+# ReadOnlyAccess intentionally excludes secretsmanager:GetSecretValue.
+# terraform/global/secrets.tf's aws_secretsmanager_secret_version.app is read
+# on every plan/refresh regardless of its lifecycle.ignore_changes (that only
+# suppresses the diff, not the read), so the plan role needs this explicitly.
+resource "aws_iam_policy" "rosa_trusted_actions_plan_secrets" {
+  name        = "rosa-trusted-actions-plan-read-secret"
+  description = "Lets the rosa-trusted-actions plan role read its own Secrets Manager secret version during terraform plan/refresh."
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["secretsmanager:GetSecretValue"]
+      Resource = ["arn:aws:secretsmanager:us-east-1:150100906299:secret:rosa-trusted-actions/ta-??????"]
+    }]
+  })
 }
 
 data "aws_caller_identity" "current" {}
