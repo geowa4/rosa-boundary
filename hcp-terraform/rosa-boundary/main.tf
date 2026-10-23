@@ -205,10 +205,8 @@ module "rosa_boundary" {
           category = "terraform"
         },
         {
-          # Temporarily enabled for reaper VPC attachment import (PR #368).
-          # Will be set back to false after import completes.
           key      = "adopt_existing_resources"
-          value    = "true"
+          value    = "false"
           category = "terraform"
           hcl      = true
         },
