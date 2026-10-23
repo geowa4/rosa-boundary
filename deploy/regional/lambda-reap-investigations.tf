@@ -8,6 +8,15 @@ resource "aws_cloudwatch_log_group" "reap_investigations_lambda" {
   tags = local.common_tags
 }
 
+# Lambda VPC execution permissions (required for VPC-attached Lambda)
+# Temporarily restored to allow removed block to execute correctly.
+# The removed block cannot work without the resource definition present.
+# After the removed block applies, this resource will move to account workspace.
+resource "aws_iam_role_policy_attachment" "reap_investigations_lambda_vpc" {
+  role       = data.aws_iam_role.reap_investigations_lambda.name
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 # Lambda permissions for ECS operations
 resource "aws_iam_role_policy" "reap_investigations_lambda_ecs" {
   name = "ecs-investigation-reaping${local.regional_policy_suffix}"
