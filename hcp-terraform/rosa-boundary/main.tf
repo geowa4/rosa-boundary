@@ -68,6 +68,79 @@ module "rosa_boundary" {
       ]
     }
 
+    rosa-boundary-stage-network-us-west-2 = {
+      terraform_version  = "1.16.0"
+      working_directory  = "deploy/network"
+      github_repo_org    = "openshift-online"
+      github_repo_name   = "rosa-boundary"
+      # T4-03 PR-B: Region B network workspace. Creds are NOT yet authorized in
+      # aws-creds, so the auto-confirmed initial run must error at
+      # AssumeRoleWithWebIdentity and create nothing (Gate B2 in PR-B2).
+      auto_apply             = false
+      auto_apply_run_trigger = false
+      variable_set_names     = ["rosa-boundary-rosa-boundary-stage-default-aws-dynamic-creds"]
+      variables = [
+        {
+          key      = "aws_region"
+          value    = "us-west-2"
+          category = "terraform"
+        },
+        {
+          key      = "availability_zones"
+          value    = "[\"us-west-2a\", \"us-west-2b\"]"
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "vpc_cidr"
+          value    = "10.81.0.0/20"
+          category = "terraform"
+        },
+        {
+          key      = "public_subnet_cidrs"
+          value    = "[\"10.81.0.0/24\", \"10.81.1.0/24\"]"
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "private_subnet_cidrs"
+          value    = "[\"10.81.8.0/24\", \"10.81.9.0/24\"]"
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "nat_strategy"
+          value    = "single"
+          category = "terraform"
+        },
+        {
+          key      = "default_tags"
+          value    = <<-EOT
+            {
+              owner         = "app-sre"
+              service-phase = "stage"
+            }
+          EOT
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "ignored_tag_keys"
+          value    = <<-EOT
+            [
+              "app",
+              "app-code",
+              "cost-center",
+              "managed_by_integration",
+              "organization",
+            ]
+          EOT
+          category = "terraform"
+          hcl      = true
+        },
+      ]
+    }
+
     rosa-boundary-stage-aws-creds = {
       terraform_version = "1.16.0"
       working_directory = "hcp-terraform/aws-creds/rosa-boundary-stage"
