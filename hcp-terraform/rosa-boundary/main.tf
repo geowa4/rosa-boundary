@@ -125,6 +125,13 @@ module "rosa_boundary" {
           category = "terraform"
         },
         {
+          # ROSAENG-74687 #365: allow Bedrock invocation logging from both staging regions.
+          key      = "bedrock_logging_source_regions"
+          value    = "[\"us-east-1\", \"us-west-2\"]"
+          category = "terraform"
+          hcl      = true
+        },
+        {
           # ROSAENG-68790: retain the budget's Region tag when moving it to account-level state.
           key      = "bedrock_budget_tag_region"
           value    = "us-east-1"
