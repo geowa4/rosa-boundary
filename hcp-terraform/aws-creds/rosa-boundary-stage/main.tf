@@ -37,6 +37,7 @@ module "aws_dynamic_creds" {
             "rosa-boundary-stage-aws-creds",
             "rosa-boundary-stage-account",
             "rosa-boundary-stage-network",
+            "rosa-boundary-stage-network-us-west-2",
             "rosa-boundary-stage-regional",
           ]
         }

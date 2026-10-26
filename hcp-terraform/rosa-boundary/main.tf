@@ -73,9 +73,9 @@ module "rosa_boundary" {
       working_directory  = "deploy/network"
       github_repo_org    = "openshift-online"
       github_repo_name   = "rosa-boundary"
-      # T4-03 PR-B: Region B network workspace. Creds are NOT yet authorized in
-      # aws-creds, so the auto-confirmed initial run must error at
-      # AssumeRoleWithWebIdentity and create nothing (Gate B2 in PR-B2).
+      # T2-PR1: Dedicated staging us-west-2 network workspace.
+      # AWS OIDC access is authorized separately via aws-creds (T2-PR2).
+      # Network infrastructure deployment requires manual plan/apply review.
       auto_apply             = false
       auto_apply_run_trigger = false
       variable_set_names     = ["rosa-boundary-rosa-boundary-stage-default-aws-dynamic-creds"]
