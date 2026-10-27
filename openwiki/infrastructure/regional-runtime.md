@@ -1,11 +1,21 @@
 ---
 type: infrastructure
 title: Regional AWS runtime infrastructure
-description: Describes the Terraform-owned regional ECS, EFS, IAM, audit storage, Lambda, encryption, and Bedrock resources and their key configuration constraints.
+description: Describes regional ECS, EFS, Lambda, audit and Bedrock resources, their shared account-IAM ownership contract, and the constraints for safely running multiple regional states.
 tags: [terraform, aws, ecs, efs, iam, bedrock]
 sources:
   - id: openwiki-source-7182e154441e0f90fda05986
     resource: repo://deploy/account/bedrock-model-agreements.tf
+  - id: openwiki-source-7abd92951c465f5a76e176f4
+    resource: repo://deploy/account/main.tf
+  - id: openwiki-source-6b03d2d17a5b9eb3f358798b
+    resource: repo://deploy/account/modules/shared-iam/bedrock-logging.tf
+  - id: openwiki-source-f4745022f20c2f39d1db313b
+    resource: repo://deploy/account/modules/shared-iam/lambda-reap-investigations.tf
+  - id: openwiki-source-ee86c0d48b646d4bc6813442
+    resource: repo://deploy/account/outputs.tf
+  - id: openwiki-source-6697a0d2171b442a1f541cf8
+    resource: repo://deploy/regional/account-iam.tf
   - id: openwiki-source-af67bd84d6fb827de35fd527
     resource: repo://deploy/regional/bedrock-endpoint.tf
   - id: openwiki-source-43a5f7fe8e3da821d41a4dba
@@ -16,6 +26,8 @@ sources:
     resource: repo://deploy/regional/ecs.tf
   - id: openwiki-source-e1ea6906f2471c7921ff32ce
     resource: repo://deploy/regional/efs.tf
+  - id: openwiki-source-84177eee21b0f3eb77df526a
+    resource: repo://deploy/regional/iam.tf
   - id: openwiki-source-d176128a85129af793772942
     resource: repo://deploy/regional/lambda-create-investigation.tf
   - id: openwiki-source-81b84da9542934c33f2e42d7
@@ -28,14 +40,18 @@ sources:
     resource: repo://deploy/regional/s3.tf
   - id: openwiki-source-92cccd8107e9e4386a317d7a
     resource: repo://deploy/regional/tests/claude_default_model.tftest.hcl
+  - id: openwiki-source-1599d372a558b44029d5589b
+    resource: repo://deploy/regional/tests/iam-ownership.tftest.hcl
   - id: openwiki-source-a055ff9a3fcbd2c0a0fc4ee2
     resource: repo://deploy/regional/variables.tf
+  - id: openwiki-source-81722021d767635aca673ab8
+    resource: repo://hcp-terraform/rosa-boundary/main.tf
   - id: openwiki-source-d796a031add13f67891a2f24
     resource: repo://lambda/reap-investigations/handler.py
-generated: { by: "openwiki/0.7.1", at: "2026-10-15T16:03:34.007Z" }
+generated: { by: "pi", at: "2026-10-27T13:26:37.491Z" }
 verified:
-  - by: openwiki/0.7.1
-    at: 2026-10-15T16:03:34.007Z
+  - by: openwiki/0.7.2
+    at: 2026-10-27T13:26:37.491Z
 ---
 
 # Regional AWS runtime infrastructure
@@ -50,7 +66,15 @@ EFS is encrypted and mounted through dedicated per-subnet mount targets. The bas
 
 The filesystem policy carries a second statement, `AllowReaperViaDedicatedAccessPoint`, granting the reap-investigations Lambda role `ClientMount`/`ClientWrite`/`ClientRootAccess` scoped by `elasticfilesystem:AccessPointArn` to a single dedicated access point (`aws_efs_access_point.reaper`), rooted at `/` with UID/GID 0 for full filesystem reach. This grant is separate from the task role's access-point-scoped statement and is deliberately not extended to the dynamically created per-investigation access points. Removing *other* investigations' access points is instead handled by a distinct `DeleteAccessPoint` permission on the reap-investigations Lambda role, scoped to resources carrying the `ManagedBy=rosa-boundary-lambda` tag so the role cannot delete unrelated access points.
 
-IAM separates the ECS execution role from the task role. The execution role supports image pulls/logging and secret retrieval; the task role carries runtime permissions for audit S3 writes, Bedrock, ECS Exec messaging, session logging, KMS, and EFS access. Shared role identities/trust live in the **account** root; their regional inline permissions live here. See [identity and access](../architecture/identity-and-access.md) for trust and task-level controls.
+IAM separates the ECS execution role from the task role. The execution role supports image pulls/logging and secret retrieval; the task role carries runtime permissions for audit S3 writes, Bedrock, ECS Exec messaging, session logging, KMS, and EFS access. See [identity and access](../architecture/identity-and-access.md) for trust and task-level controls.
+
+## Account/regional ownership and multi-region contract
+
+The **account** root owns shared IAM role identities, trust policies, OIDC providers, and common AWS-managed policy attachments. This includes both the basic execution and `AWSLambdaVPCAccessExecutionRole` attachments on the investigation-reaper role. Regional roots own inline permission grants, not shared identities or managed attachments, and resolve roles by name and OIDC providers by issuer URL through data lookups rather than remote state. Account identity creation therefore does not require regional resource ARNs.
+
+Every regional root must use the same `account_role_name_prefix` and the same single `legacy_policy_region` from the account root's `regional_iam_contract` output. Only that legacy region keeps unsuffixed inline-policy names; all other regions append `-${aws_region}`. The staging definitions designate `us-east-1` as the legacy owner and `us-west-2` as an additional consumer. A west workspace must not choose itself as another legacy owner, because that would overwrite east's inline policies on the same roles.
+
+Regional policy ownership does **not** make IAM roles regional: the shared identity receives the union of grants from all consuming regions. Keep each inline policy and each `(role, managed-policy ARN)` attachment under exactly one state owner; exclusive policy reconciliation would remove another region's grants. The regional `account-handoff.tf` declarations release listed legacy account-owned objects with `destroy = false`, while inline policies remain in regional state. This configuration is not evidence that a particular live state transfer or apply succeeded. Coordinate teardown across all consumers before deleting account roles; see [HCP workspace integration](hcp-terraform-workspaces.md) for the six-workspace staging topology and apply gates.
 
 ## Audit and session records
 
@@ -64,20 +88,37 @@ The regional stack ships three Lambda functions: create-investigation, reap-task
 
 The create-investigation Lambda can be packaged as ZIP (the default) or as a container image; both modes receive the same runtime configuration. Image mode requires a repository and an immutable tag; staging sets image mode for remote execution. Its AWS-IAM-authorized Function URL is configured separately from the CLI's direct SDK invocation path. The reap-tasks Lambda is packaged from its single handler file and gets scoped ECS list/describe/stop permissions; EventBridge invokes it at the configured schedule to stop expired tasks **without an active Exec session**.
 
-The reap-investigations Lambda runs on its own schedule (default every 8 hours, configurable) to garbage-collect stale investigations: it lists tagged EFS access points, checks each investigation for staleness (no running tasks plus an elapsed grace period), and deletes the EFS directory, the access point, and any matching task definitions. It gets its own `aws_cloudwatch_log_group` and an `AWSLambdaVPCAccessExecutionRole` policy attachment (VPC execution is a regional concern because the account-level role only carries the basic execution policy). Its inline IAM grants are scoped narrowly: `ecs:ListTasks`/`ecs:DescribeTasks` conditioned on the regional cluster ARN, plus wildcard-resource `ecs:ListTaskDefinitions`/`ecs:DeregisterTaskDefinition` (those actions do not support resource-level permissions); `elasticfilesystem:DescribeAccessPoints` and a tag-conditioned `DeleteAccessPoint` on the filesystem; and `ClientMount`/`ClientWrite`/`ClientRootAccess` bounded to its own dedicated access point (`aws_efs_access_point.reaper`, UID/GID 0, rooted at `/`) so it can mount and write/delete stale investigation directories. It also mounts that dedicated access point directly via `file_system_config` (`/mnt/efs`) and holds scoped `s3:PutObject`/`s3:PutObjectAcl`/`s3:ListBucket` permissions for writing a final backup under `{cluster}/{investigation}/reaper-final-backup/*` in the audit bucket before deletion. A dedicated `reaper_lambda` security group permits only outbound traffic, since EventBridge — not inbound network access — triggers invocation.
+The reap-investigations Lambda runs on its own schedule (Terraform default every 8 hours) to reclaim investigation directories, access points, and matching task definitions. Eligibility requires no matching RUNNING task and an access-point creation age strictly greater than the configured grace period (Terraform default 168 hours), or a missing `CreatedAt` tag treated as legacy state. It is not a timer starting when the last task stops. The handler rechecks running tasks before cleanup and requires a successful final S3 backup before deleting an existing directory; see [investigation lifecycle](../workflows/investigation-lifecycle.md#investigation-level-garbage-collection-reap-investigations).
+
+Regional Terraform gives this function its own log group, security group, and inline grants on the account-owned reaper role:
+
+- **ECS:** `ListTasks`/`DescribeTasks` are conditioned on the regional cluster ARN; `ListTaskDefinitions` and `DeregisterTaskDefinition` are configured with wildcard resources. Family matching is performed by the handler, not by a family-specific IAM condition.
+- **EFS:** `DescribeAccessPoints` targets the regional filesystem. `DeleteAccessPoint` targets access-point ARNs in the current account/Region and requires `ManagedBy=rosa-boundary-lambda`. The separate `ClientMount`/`ClientWrite`/`ClientRootAccess` grant targets the filesystem and requires the dedicated reaper access point, not an investigation access point.
+- **S3:** `PutObject`/`PutObjectAcl` target `{cluster}/{investigation}/reaper-final-backup/*` in the audit bucket; `ListBucket` is prefix-conditioned for that backup layout.
+
+The function mounts `aws_efs_access_point.reaper` directly at `/mnt/efs` through `file_system_config`. That access point uses UID/GID 0 and root `/`; the filesystem policy independently authorizes it. VPC configuration uses the supplied subnets and an outbound-only `reaper_lambda` security group; EventBridge invocation does not require inbound network access. The common VPC execution managed-policy attachment is owned once by account state, not recreated by every region.
 
 ## Bedrock access and approved models
 
 Fargate tasks use a private Bedrock Runtime interface endpoint with private DNS, task-only HTTPS ingress, and one subnet per availability zone in the configured VPC. The endpoint policy grants inference calls to the task role. Task IAM does not grant Marketplace subscription; **account Terraform** owns model agreements from an explicit model-to-offer map. Regional Terraform validates the default Claude inference profile against a pinned profile-to-foundation-model mapping and the approved agreement input; it is not inferred by stripping a prefix. Terraform tests use a mocked AWS provider to accept an approved profile and reject a bare foundation-model ID or a profile whose foundation model is not approved.
+
+The account-owned Bedrock logging role has a separate regional service-trust contract. `bedrock_logging_source_regions` enumerates permitted `SourceArn` regions while retaining `SourceAccount`; an empty account input falls back to the legacy role-tag region, not a wildcard. Staging explicitly approves east and west. Each regional root still owns its own invocation-logging configuration, CloudWatch/KMS destination, large-payload bucket, and delivery grant. Allowing west in trust is a prerequisite for west logging, not proof that payload delivery works there.
+
+## Focused verification
+
+The mocked regional IAM tests assert that identities and managed attachments are absent from regional ownership, grants use looked-up account roles, a second region uses non-colliding policy names, and EFS reaper grants retain their dedicated-access-point conditions. Account tests verify shared trust/attachments and the explicit multi-region Bedrock trust list. These tests validate rendered configuration, not live role adoption, IAM authorization, or delivery. See [testing and verification](../testing/verification.md) for suite selection and [audit operations](../operations/audit-and-logging.md) for deployed evidence.
 
 ## Evidence-backed claims
 
 - Regional Terraform guards the target account, subnet count, outbound routes, and Bedrock endpoint subnet/VPC/AZ shape. [provider and routing checks](repo://deploy/regional/main.tf#L1-L69) · [Bedrock endpoint preconditions](repo://deploy/regional/bedrock-endpoint.tf#L30-L69)
 - The Fargate task definition mounts persistent EFS home plus empty task-scoped credential overlays, with an optional kube-proxy sidecar whose health gates the main container. [task volumes and container configuration](repo://deploy/regional/ecs.tf#L61-L159) · [sidecar](repo://deploy/regional/ecs.tf#L175-L224)
 - EFS is encrypted and its filesystem policy allows the task role to mount via an access point; the baseline access point uses the `sre` UID/GID. [filesystem and mount targets](repo://deploy/regional/efs.tf#L1-L42) · [access point and policy](repo://deploy/regional/efs.tf#L44-L75)
-- The EFS filesystem policy's `AllowReaperViaDedicatedAccessPoint` statement grants the reap-investigations Lambda role `ClientMount`/`ClientWrite`/`ClientRootAccess` scoped to its own dedicated `aws_efs_access_point.reaper`, distinct from both the task role's access-point-scoped grant and the reap-investigations role's separate tag-scoped `DeleteAccessPoint` permission used to remove other investigations' access points. [dedicated reaper statement](repo://deploy/regional/efs.tf#L103-L126) · [reaper access point](repo://deploy/regional/lambda-reap-investigations.tf#L127-L150) · [tag-scoped DeleteAccessPoint](repo://deploy/regional/lambda-reap-investigations.tf#L62-L94)
+- The EFS filesystem policy's `AllowReaperViaDedicatedAccessPoint` statement grants the reap-investigations Lambda role `ClientMount`/`ClientWrite`/`ClientRootAccess` scoped to its own dedicated `aws_efs_access_point.reaper`, distinct from both the task role's access-point-scoped grant and the reap-investigations role's separate tag-scoped `DeleteAccessPoint` permission used to remove other investigations' access points. [dedicated reaper statement](repo://deploy/regional/efs.tf#L103-L126) · [reaper access point](repo://deploy/regional/lambda-reap-investigations.tf#L120-L143) · [tag-scoped DeleteAccessPoint](repo://deploy/regional/lambda-reap-investigations.tf#L59-L70)
 - The audit bucket enables versioning and compliance-mode Object Lock, blocks public access, encrypts with AES-256, and denies non-TLS requests; replication is optional and account-scoped. [audit bucket controls](repo://deploy/regional/s3.tf#L1-L73) · [replication](repo://deploy/regional/s3.tf#L75-L120)
 - Create-investigation Lambda ZIP and container-image modes share environment configuration, while image mode requires an image repository and tag; a separate EventBridge schedule invokes the task-deadline reaper. [Lambda package modes](repo://deploy/regional/lambda-create-investigation.tf#L11-L140) · [reaper schedule](repo://deploy/regional/lambda-reap-tasks.tf#L42-L66)
-- The reap-investigations Lambda is a third regional function with its own log group, VPC execution policy attachment, scoped ECS list/describe/deregister-task-definition permissions, and EFS describe/delete-access-point plus mount/write/root-access permissions bounded to its dedicated access point; it mounts that access point directly and runs on an independent EventBridge schedule to clean up stale investigation directories, access points, and task definitions. [log group, VPC policy, and IAM grants](repo://deploy/regional/lambda-reap-investigations.tf#L1-L94) · [dedicated access point and function](repo://deploy/regional/lambda-reap-investigations.tf#L127-L222) · [account-level role identity](repo://deploy/account/modules/shared-iam/lambda-reap-investigations.tf#L1-L13) · [handler staleness and cleanup logic](repo://lambda/reap-investigations/handler.py#L85-L250)
+- The investigation reaper uses an account-owned role and basic/VPC managed attachments, with regional logging and ECS/EFS/S3 inline grants; access-point deletion and filesystem mounting have different conditions. [regional grants](repo://deploy/regional/lambda-reap-investigations.tf#L1-L117) · [shared identity and attachments](repo://deploy/account/modules/shared-iam/lambda-reap-investigations.tf#L1-L19)
+- The reaper mounts its dedicated root access point at `/mnt/efs`, runs independently, and backs up existing directory data before ordered cleanup. Eligibility is creation-age-based with an idle legacy exception for missing `CreatedAt`. [function and schedule](repo://deploy/regional/lambda-reap-investigations.tf#L174-L239) · [staleness](repo://lambda/reap-investigations/handler.py#L252-L321) · [backup-before-delete](repo://lambda/reap-investigations/handler.py#L662-L712)
+- Shared-role lookup and regional policy suffixes preserve one owner per grant without implying region-isolated permissions. [lookup and naming](repo://deploy/regional/account-iam.tf#L1-L49) · [account contract](repo://deploy/account/outputs.tf#L1-L12) · [ownership and suffix tests](repo://deploy/regional/tests/iam-ownership.tftest.hcl#L98-L121) · [additional-region tests](repo://deploy/regional/tests/iam-ownership.tftest.hcl#L193-L233)
+- Account-managed Bedrock logging trust permits only approved source regions in the same account; regional destinations and grants remain separate. [account input fallback](repo://deploy/account/main.tf#L42-L49) · [service trust](repo://deploy/account/modules/shared-iam/bedrock-logging.tf#L1-L28) · [staging region list](repo://hcp-terraform/rosa-boundary/main.tf#L197-L207)
 - Account Terraform manages Bedrock model agreement offers by ID, while regional validation requires the configured default inference profile to map to an approved foundation model; Terraform tests reject invalid profile/agreement combinations. [account agreements](repo://deploy/account/bedrock-model-agreements.tf#L1-L40) · [default model validation](repo://deploy/regional/variables.tf#L37-L65) · [Terraform tests](repo://deploy/regional/tests/claude_default_model.tftest.hcl#L78-L115)
 - Bedrock Runtime uses a private interface endpoint and invocation payload logging sends text to encrypted CloudWatch storage and larger payloads to a separate S3 bucket. [runtime endpoint](repo://deploy/regional/bedrock-endpoint.tf#L1-L69) · [invocation logging](repo://deploy/regional/bedrock-logging.tf#L1-L85) · [large-payload bucket](repo://deploy/regional/bedrock-large-payloads.tf#L1-L86)

@@ -1,4 +1,4 @@
 # Files
 
-- [HCP Terraform workspace integration](hcp-terraform-workspaces.md) - Explains the public-repository-backed staging account, GitHub VCS integration, HCP Terraform permissions, AWS dynamic credentials, four workload workspaces, and CI boundary.
-- [Regional AWS runtime infrastructure](regional-runtime.md) - Describes the Terraform-owned regional ECS, EFS, IAM, audit storage, Lambda, encryption, and Bedrock resources and their key configuration constraints.
+- [HCP Terraform workspace integration](hcp-terraform-workspaces.md) - Explains Git-managed staging deployment across six HCP Terraform workspaces, shared account identities, two regional runtimes, AWS dynamic credentials, apply gates, and the CI boundary.
+- [Regional AWS runtime infrastructure](regional-runtime.md) - Describes regional ECS, EFS, Lambda, audit and Bedrock resources, their shared account-IAM ownership contract, and the constraints for safely running multiple regional states.
