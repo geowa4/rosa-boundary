@@ -69,10 +69,10 @@ module "rosa_boundary" {
     }
 
     rosa-boundary-stage-network-us-west-2 = {
-      terraform_version  = "1.16.0"
-      working_directory  = "deploy/network"
-      github_repo_org    = "openshift-online"
-      github_repo_name   = "rosa-boundary"
+      terraform_version = "1.16.0"
+      working_directory = "deploy/network"
+      github_repo_org   = "openshift-online"
+      github_repo_name  = "rosa-boundary"
       # T2-PR1: Dedicated staging us-west-2 network workspace.
       # AWS OIDC access is authorized separately via aws-creds (T2-PR2).
       # Network infrastructure deployment requires manual plan/apply review.
@@ -509,6 +509,187 @@ module "rosa_boundary" {
           EOT
           category = "terraform"
           hcl      = true
+        },
+      ]
+    }
+
+    rosa-boundary-stage-regional-us-west-2 = {
+      terraform_version = "1.16.0"
+      working_directory = "deploy/regional"
+      github_repo_org   = "openshift-online"
+      github_repo_name  = "rosa-boundary"
+      # T2-PR3: Create the staging us-west-2 regional workspace without AWS access.
+      # T2-PR4 will authorize AWS OIDC access and deploy regional infrastructure.
+      auto_apply             = false
+      auto_apply_run_trigger = false
+      variable_set_names     = ["rosa-boundary-rosa-boundary-stage-default-aws-dynamic-creds"]
+      variables = [
+        {
+          # ROSAENG-68790: match the account workspace's shared IAM role prefix.
+          key      = "account_role_name_prefix"
+          value    = "rosa-boundary-stage"
+          category = "terraform"
+        },
+        {
+          # CRITICAL: us-east-1 (Region A) remains the sole legacy inline
+          # policy owner. Region B must keep this value so its inline policies
+          # take the -us-west-2 suffix instead of overwriting Region A's
+          # unsuffixed names. Never designate a second legacy owner.
+          key      = "legacy_policy_region"
+          value    = "us-east-1"
+          category = "terraform"
+        },
+        {
+          key      = "aws_account_id"
+          value    = "150100906299"
+          category = "terraform"
+        },
+        {
+          key      = "aws_region"
+          value    = "us-west-2"
+          category = "terraform"
+        },
+        {
+          key      = "bedrock_model_agreements"
+          value    = <<-EOT
+            {
+              "anthropic.claude-sonnet-5" = "offer-2ykemehpsyf7g"
+              "anthropic.claude-opus-4-6-v1" = "offer-ee7a27hh4hr62"
+              "anthropic.claude-opus-4-8" = "offer-wdkl4yk6s7uu4"
+              "anthropic.claude-opus-5" = "offer-f3u6lgbrem3zs"
+              "anthropic.claude-haiku-4-5-20251001-v1:0" = "offer-fudwqbphlos64"
+              "openai.gpt-6-sol" = "offer-pycji3sz5gpcc"
+              "openai.gpt-6-luna" = "offer-gmo53nkzc5or6"
+            }
+          EOT
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "claude_default_model"
+          value    = "us.anthropic.claude-sonnet-5"
+          category = "terraform"
+        },
+        {
+          key      = "stage"
+          value    = "stage"
+          category = "terraform"
+        },
+        {
+          key      = "bedrock_monthly_budget_usd"
+          value    = "2500"
+          category = "terraform"
+        },
+        {
+          key      = "bedrock_budget_notification_email"
+          value    = "rosa-boundary-access@redhat.com"
+          category = "terraform"
+        },
+        {
+          # Network B (T2-PR2) deployed VPC in us-west-2.
+          key      = "vpc_id"
+          value    = "vpc-0542b778bebc15361"
+          category = "terraform"
+        },
+        {
+          # Network B (T2-PR2) deployed private subnets in us-west-2a/us-west-2b.
+          key      = "subnet_ids"
+          value    = "[\"subnet-0d5fca0e91bca08c4\", \"subnet-01c983035ca092c38\"]"
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "container_image"
+          value    = "quay.io/redhat-user-workloads/rosa-tenant/rosa-boundary:884fc38ddc1e4d31f922cf13ad954984f53fa8c3"
+          category = "terraform"
+        },
+        {
+          key      = "keycloak_issuer_url"
+          value    = "https://auth.redhat.com/auth/realms/EmployeeIDP"
+          category = "terraform"
+        },
+        {
+          key       = "keycloak_thumbprint"
+          value     = "6541cf7958127d300fe86fd7ff324e836c75b53b"
+          category  = "terraform"
+          sensitive = true
+        },
+        {
+          key      = "required_groups"
+          value    = "[\"ai-sd-sre\"]"
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "abac_tag_key"
+          value    = "uuid"
+          category = "terraform"
+        },
+        {
+          key      = "allowed_uuids"
+          value    = "[\"7b5e6e92-0d75-11e7-851d-28d244ea5a6d\", \"a97b94a0-4b53-11ec-abc9-0a58ac14e8ca\", \"1e750c90-503c-11ec-bc06-0a58ac147a77\", \"9f1c4a70-a139-11e9-97cb-001a4a0a0044\"]"
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "enable_uuid_allowlist"
+          value    = "false"
+          category = "terraform"
+        },
+        {
+          key      = "enable_oidc_group_enforcement"
+          value    = "true"
+          category = "terraform"
+        },
+        {
+          key      = "required_oidc_role"
+          value    = "ai-sd-sre"
+          category = "terraform"
+        },
+        {
+          key      = "lambda_package_type"
+          value    = "Image"
+          category = "terraform"
+        },
+        {
+          key      = "lambda_image_repository"
+          value    = "redhat-user-workloads/rosa-tenant/create-investigation-lambda"
+          category = "terraform"
+        },
+        {
+          key      = "lambda_image_tag"
+          value    = "d9c5746ebee2a2e2f93ff618377f13a7aa0d9c30"
+          category = "terraform"
+        },
+        {
+          key      = "default_tags"
+          value    = <<-EOT
+            {
+              owner         = "app-sre"
+              service-phase = "stage"
+            }
+          EOT
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "ignored_tag_keys"
+          value    = <<-EOT
+            [
+              "app",
+              "app-code",
+              "cost-center",
+              "managed_by_integration",
+              "organization",
+            ]
+          EOT
+          category = "terraform"
+          hcl      = true
+        },
+        {
+          key      = "log_retention_days"
+          value    = "90"
+          category = "terraform"
         },
       ]
     }
