@@ -1,3 +1,3 @@
 # Files
 
-- [Testing and verification strategy](verification.md) - Maps Go, Lambda, shell, Terraform, and LocalStack tests to the behavior they verify and explains the difference between local integration and Prow execution.
+- [Testing and verification strategy](verification.md) - Maps Go, Lambda, shell, Terraform IAM/model, and LocalStack tests to their contracts, including legacy-staleness regressions, test-discovery boundaries, and known account-test drift.

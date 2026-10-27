@@ -4,6 +4,10 @@ title: ROSA Boundary auditing and logging flows
 description: Inventories the evidence produced by ROSA Boundary, explains its contents, access paths, retention and protection controls, and identifies audit-coverage boundaries.
 tags: [audit, logging, operations, cloudwatch, s3, cloudtrail, bedrock]
 sources:
+  - id: openwiki-source-6b03d2d17a5b9eb3f358798b
+    resource: repo://deploy/account/modules/shared-iam/bedrock-logging.tf
+  - id: openwiki-source-45393b666c4d8ce854ed025b
+    resource: repo://deploy/account/README.md
   - id: openwiki-source-43a5f7fe8e3da821d41a4dba
     resource: repo://deploy/regional/bedrock-large-payloads.tf
   - id: openwiki-source-86eaa81471e45a1fc5290cf1
@@ -18,14 +22,20 @@ sources:
     resource: repo://deploy/regional/lambda-reap-investigations.tf
   - id: openwiki-source-a7f1ddde1efa89d5bfad2d5c
     resource: repo://deploy/regional/lambda-reap-tasks.tf
+  - id: openwiki-source-a467cf2af07b3f58e60a50ab
+    resource: repo://deploy/regional/main.tf
   - id: openwiki-source-dcec1f4680246d4606ff71f8
     resource: repo://deploy/regional/s3.tf
   - id: openwiki-source-a055ff9a3fcbd2c0a0fc4ee2
     resource: repo://deploy/regional/variables.tf
   - id: openwiki-source-906e68a1845a7f4a2e8058f4
     resource: repo://docs/configuration/aws-iam-policies.md
+  - id: openwiki-source-96d2d2466918222634b57b14
+    resource: repo://docs/runbooks/audit-log-access.md
   - id: openwiki-source-e9906b078522ed0a08c64ff1
     resource: repo://entrypoint.sh
+  - id: openwiki-source-81722021d767635aca673ab8
+    resource: repo://hcp-terraform/rosa-boundary/main.tf
   - id: openwiki-source-d796a031add13f67891a2f24
     resource: repo://lambda/reap-investigations/handler.py
   - id: openwiki-source-6e447421bb9d1456afb165d9
@@ -34,15 +44,17 @@ sources:
     resource: repo://tests/localstack/integration/test_s3_audit.py
   - id: openwiki-source-b696734e098932f3853bbb51
     resource: repo://tests/shell/entrypoint.bats
-generated: { by: "openwiki/0.7.1", at: "2026-10-15T16:03:34.007Z" }
+generated: { by: "pi", at: "2026-10-27T13:26:37.491Z" }
 verified:
-  - by: openwiki/0.7.1
-    at: 2026-10-15T16:03:34.007Z
+  - by: openwiki/0.7.2
+    at: 2026-10-27T13:26:37.491Z
 ---
 
 # ROSA Boundary auditing and logging flows
 
 ROSA Boundary does not produce one complete audit record. Evidence is split between CloudWatch Logs, an S3 workspace escrow copy, AWS control-plane records, task tags, and (when Claude Code uses Bedrock) model-invocation payload logs. The streams have different contents, retention, and access paths. Use the AWS account and Region where the Boundary regional stack is deployed; substitute its actual project/stage names and configured retention overrides for the `rosa-boundary-dev` examples below.
+
+Staging declares separate `us-east-1` and `us-west-2` regional workspaces. Log-group names such as `/ecs/rosa-boundary-stage/ssm-sessions` do not encode the Region and can be the same in both; select the correct AWS Region when querying. Audit-bucket names include the account and Region (`<account>-<project>-<stage>-<region>`). The [audit log access runbook](../../docs/runbooks/audit-log-access.md) provides the approved access-request and SAML-login procedure; it does not establish that a deployment or trail is live.
 
 ## Evidence inventory
 
@@ -52,7 +64,7 @@ ROSA Boundary does not produce one complete audit record. Evidence is split betw
 | Container and sidecar output | `stdout`/`stderr` emitted by the main container (entrypoint warnings/status and workload output) and optional `kube-proxy` sidecar. This is not a filesystem snapshot. | CloudWatch log group `/ecs/<project>-<stage>`; stream prefixes are `rosa-boundary` and `kube-proxy`. |
 | Create-investigation Lambda | Request-header keys/values after redaction of `Authorization` and `X-OIDC-Token`, OIDC validation and group authorization outcomes, user/subject and investigation identifiers, resource/task lifecycle messages, and errors. The handler does not log the raw request body or OIDC token in its normal messages. | `/aws/lambda/<project>-<stage>-create-investigation`. |
 | Task-timeout reaper Lambda (reap-tasks) | Scheduled checks, running-task counts, expired task IDs/deadlines, stop outcomes, skipped tasks, and errors; its result also summarizes checked/stopped/skipped/error counts. | `/aws/lambda/<project>-<stage>-reap-tasks`. |
-| Investigation reaper Lambda (reap-investigations) | Scheduled staleness checks (an investigation is stale once it has no running ECS task and its EFS access point's `CreatedAt` tag age exceeds `GRACE_PERIOD_HOURS` — the handler's own fallback is 72h if the variable is unset, while the deployed Terraform default for `investigation_grace_period_hours` is 168h/7 days), EFS investigation-directory and access-point deletions, task-definition deregistrations, and its own checked/reaped/skipped/error summary. Error-path logging deliberately omits file paths and S3 keys, logging error codes and cluster/investigation IDs instead. | `/aws/lambda/<project>-<stage>-reap-investigations`. |
+| Investigation reaper Lambda (reap-investigations) | Eligibility checks, cleanup outcomes, and a checked/reaped/skipped/error summary. With no matching RUNNING task, creation age must exceed `GRACE_PERIOD_HOURS`, or `CreatedAt` must be missing (legacy cleanup without a grace wait). Terraform defaults to 168h/7 days; the handler falls back to 72h only if the environment setting is absent. Expected S3 upload-failure messages omit raw file paths and object keys, but normal backup/deletion messages and other error paths can contain directory paths, prefixes, and investigation identifiers. | `/aws/lambda/<project>-<stage>-reap-investigations`. |
 | Investigation S3 escrow (shutdown sync) | A best-effort copy of eligible `/home/sre` files on container shutdown: e.g. shell history, notes, and downloaded/workspace files. It is a point-in-time shutdown sync, not a live filesystem journal. | The investigation audit bucket, under `<cluster-id>/<investigation-id>/<YYYYMMDD>/<task-id>/`. |
 | Investigation S3 escrow (reaper final backup) | A best-effort full copy of the EFS investigation directory that the reap-investigations Lambda uploads immediately before deleting that directory, using the same `.config/ocm/*`/`.kube/*` exclusions as the shutdown sync and skipping symlinks. If the backup fails or times out, the Lambda refuses to delete the directory that cycle, leaving it for a later run. | The investigation audit bucket, under `<cluster-id>/<investigation-id>/reaper-final-backup/`. |
 | Bedrock invocation payloads | Text model request/response payloads for Bedrock Runtime callers in the AWS account and Region—not only Boundary tasks. CloudWatch receives text payloads up to 100 KB; larger payloads go to a separate S3 bucket. Image, embedding, and video delivery are disabled by this configuration. | CloudWatch `/aws/bedrock/<project>-<stage>/model-invocations` and the separate `<audit-bucket>-bedrock-invocations` bucket under `large-data/`. |
@@ -92,9 +104,13 @@ aws s3 cp "s3://<audit-bucket>/<cluster-id>/<investigation-id>/<date>/<task-id>/
   --region "${REGION}"
 ```
 
-The task role is designed for audit-bucket writes (`PutObject`, plus `ListBucket`); it is not the reader role. The operations guidance says SREs should not receive direct bucket access and that retrieval should use a separately managed read-only compliance role. CloudTrail Event history can be searched by event name, user, and time; availability and S3 data-event coverage depend on the account/organization trail configuration.
+The task role is designed for audit-bucket writes (`PutObject`, plus `ListBucket`); it is not the reader role. The [access runbook](../../docs/runbooks/audit-log-access.md#access-model) describes a separately managed `rosa-boundary-audit-reader` role for read-only S3 access, requested through an app-interface user-role assignment and used through SAML login. It warns not to use `--assume-uid` with the scoped role. This repository's account baseline does not create that reader role, and the runbook explicitly says it does **not** provide CloudWatch Logs read access: arrange that separately before using the log commands above. Do not broaden the investigation task role or use administrator credentials merely to read artifacts.
+
+CloudTrail Event history can be searched by event name, user, and time; availability and S3 data-event coverage depend on the account/organization trail configuration. The runbook's access procedure and general CloudTrail wording are not evidence that object-level reads or writes are being captured in the selected account.
 
 For Bedrock text payloads, query the dedicated CloudWatch log group with the same CloudWatch Logs tools above. Retrieve larger objects from the separate Bedrock payload bucket only through restricted read access. This bucket is distinct from the investigation escrow bucket and does not inherit the investigation bucket's Object Lock configuration.
+
+Bedrock delivery also depends on shared account-role trust. Account Terraform retains `aws:SourceAccount` and permits only the `bedrock_logging_source_regions` list in `aws:SourceArn`; staging explicitly lists east and west. Each regional stack still defines its own encrypted CloudWatch destination, large-payload bucket and inline logging grant. A shared role does not combine regional logs, and adding a region to trust is not proof of successful delivery. Check the configured source Region and both destination types when investigating gaps.
 
 ## Collection, retention, and protection
 
@@ -107,6 +123,7 @@ For Bedrock text payloads, query the dedicated CloudWatch log group with the sam
 ## Coverage boundaries and operating cautions
 
 - The S3 snapshots (both the container's shutdown sync and the investigation reaper's pre-deletion backup) record eligible workspace files only at those two specific moments. Neither records every file operation, provides continuous backup, or establishes who read an object. Use CloudTrail S3 data events if object-level access auditing is required.
+- Reaper cleanup uses investigation **creation age**, not time since the last task stopped. An already-old workspace, or an idle legacy workspace missing `CreatedAt`, can be eligible on the next scheduled run immediately after a task stops. A malformed timestamp is a staleness-check error, not the legacy missing-tag branch. Backup failure or missing S3 backup configuration blocks deletion of an existing directory, but stopping or closing a task is not by itself proof that a snapshot was captured. See [investigation lifecycle](../workflows/investigation-lifecycle.md#investigation-level-garbage-collection-reap-investigations).
 - EFS is persistent investigation workspace storage, not an audit log or file-change journal. ECS task tags are useful correlation metadata but are not a substitute for retained CloudWatch/CloudTrail records.
 - This repository provisions CloudWatch groups for ECS, Lambda, and Bedrock, but does not provision an AWS CloudTrail trail/event data store. Confirm account-level CloudTrail coverage with the AWS account owner rather than assuming every API call or S3 object access is recorded.
 - The repository deploys Keycloak on OpenShift, but does not configure a central Keycloak authentication-event export in this AWS logging stack. The docs' operator-log command (`oc logs -n keycloak deployment/rhbk-operator`) is for troubleshooting the operator, not a complete end-user login audit history.
@@ -121,5 +138,7 @@ For Bedrock text payloads, query the dedicated CloudWatch log group with the sam
 - The investigation audit bucket combines versioning and compliance Object Lock with public-access blocking, AES-256 encryption, TLS-only access, and optional cross-account replication; task IAM permits writes rather than providing the compliance read path. [bucket controls](repo://deploy/regional/s3.tf#L1-L73) · [replication](repo://deploy/regional/s3.tf#L75-L120) · [task S3 policy](repo://deploy/regional/iam.tf#L42-L58)
 - Bedrock invocation logging sends text payloads account/Region-wide to encrypted CloudWatch Logs and larger text payloads to a separate S3 bucket; other modalities are disabled. [invocation configuration](repo://deploy/regional/bedrock-logging.tf#L56-L85) · [large-payload bucket controls](repo://deploy/regional/bedrock-large-payloads.tf#L1-L51)
 - S3 sync tests verify that nested OCM and kubeconfig files are excluded while ordinary workspace controls remain eligible, including checks for token/account-response canaries. [shell sync tests](repo://tests/shell/entrypoint.bats#L88-L174) · [LocalStack audit sync test](repo://tests/localstack/integration/test_s3_audit.py#L114-L177)
-- The reap-investigations Lambda has its own `log_retention_days`-governed CloudWatch group and logs staleness-check reasoning (running-task counts, grace-period age), per-investigation EFS directory/access-point deletions, task-definition deregistration counts, and a final checked/reaped/skipped/error summary; its S3 error logging omits file paths and object keys. [log group](repo://deploy/regional/lambda-reap-investigations.tf#L1-L9) · [staleness and summary logging](repo://lambda/reap-investigations/handler.py#L104-L249) · [redacted S3 error logging](repo://lambda/reap-investigations/handler.py#L639-L648)
+- The investigation reaper logs eligibility reasons, directory/access-point cleanup, task-definition deregistration counts, and summary counters. Expected S3 upload-error messages avoid raw paths/keys, but other normal/error messages retain operational identifiers and paths. [log group](repo://deploy/regional/lambda-reap-investigations.tf#L1-L9) · [staleness and summary logging](repo://lambda/reap-investigations/handler.py#L104-L249) · [upload failure messages](repo://lambda/reap-investigations/handler.py#L641-L659) · [directory messages](repo://lambda/reap-investigations/handler.py#L687-L712)
+- Matching running tasks block GC; otherwise timestamped workspaces use strict creation age and missing timestamps take the legacy branch. Handler fallback and Terraform defaults are distinct. [eligibility](repo://lambda/reap-investigations/handler.py#L179-L223) · [age and legacy logic](repo://lambda/reap-investigations/handler.py#L252-L321) · [environment wiring](repo://deploy/regional/lambda-reap-investigations.tf#L184-L192) · [Terraform default](repo://deploy/regional/variables.tf#L413-L422)
+- Bedrock's shared delivery-role trust explicitly restricts source account/regions, while destinations remain regional. [service trust](repo://deploy/account/modules/shared-iam/bedrock-logging.tf#L1-L28) · [staging approvals](repo://hcp-terraform/rosa-boundary/main.tf#L197-L207) · [regional destinations](repo://deploy/regional/bedrock-logging.tf#L48-L85)
 - Before deleting a stale investigation's EFS directory, the reap-investigations Lambda uploads a best-effort backup of that directory to the audit bucket under `<cluster-id>/<investigation-id>/reaper-final-backup/`, reusing the `.config/ocm/*`/`.kube/*` exclusions and symlink-skipping behavior of the container's shutdown sync, and it refuses to delete the directory if the backup fails or times out. [backup-then-delete ordering](repo://lambda/reap-investigations/handler.py#L660-L710) · [exclusions and symlink handling](repo://lambda/reap-investigations/handler.py#L580-L637) · [scoped S3 IAM grant](repo://deploy/regional/lambda-reap-investigations.tf#L96-L125)
