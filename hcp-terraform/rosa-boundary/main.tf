@@ -458,7 +458,7 @@ module "rosa_boundary" {
         },
         {
           key      = "lambda_image_tag"
-          value    = "884fc38ddc1e4d31f922cf13ad954984f53fa8c3"
+          value    = "d9c5746ebee2a2e2f93ff618377f13a7aa0d9c30"
           category = "terraform"
         },
         {
