@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This issue and its sub-issues are the **grounding** for a later ontology of rosa-boundary and for risk analysis of the actions the system takes at runtime. The grounding records, with source citations:
+This document and its per-domain companions (drafted as a GitHub parent issue and sub-issues; kept as files because Issues are disabled on the repository) are the **grounding** for a later ontology of rosa-boundary and for risk analysis of the actions the system takes at runtime. The grounding records, with source citations:
 
 - which actors exist and under which identity and credential each one acts;
 - which entities and identifiers exist, where each is minted and where it is consumed;
@@ -103,7 +103,7 @@ Asked on 2026-11-08 while preparing this grounding:
 
 ## ⚠️ Questions for the maintainer (consolidated from every sub-issue)
 
-> These are everything source alone could not settle, plus design-intent questions. Each carries an ID so the ontology work can reference it. Answers can be left as comments here; the sub-issue's section 10 holds the same text with full context.
+> These are everything source alone could not settle, plus design-intent questions. Each carries an ID so the ontology work can reference it. Answers can be recorded next to each question here or in the eventual issue; each domain file's section 10 holds the same text with full context.
 
 ### Identity — Keycloak IdP ([Keycloak identity provider (runtime): claims, flows, token lifetimes, IdP state](01-kc.md))
 
