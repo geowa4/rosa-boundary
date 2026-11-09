@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document and its per-domain companions (drafted as a GitHub parent issue and sub-issues; kept as files because Issues are disabled on the repository) are the **grounding** for a later ontology of rosa-boundary and for risk analysis of the actions the system takes at runtime. The grounding records, with source citations:
+This document and its per-domain companions are a committed mirror of GitHub issue [#1](https://github.com/geowa4/rosa-boundary/issues/1) and its sub-issues #2–#17, which are the canonical, commentable copy. Together they are the **grounding** for a later ontology of rosa-boundary and for risk analysis of the actions the system takes at runtime. The grounding records, with source citations:
 
 - which actors exist and under which identity and credential each one acts;
 - which entities and identifiers exist, where each is minted and where it is consumed;
