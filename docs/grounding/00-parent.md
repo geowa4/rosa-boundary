@@ -25,6 +25,7 @@ It is **not** the ontology. It proposes no classes or relations; it records fact
   - `[convention-only]` naming, tags or ordering the code relies on but nothing checks;
   - `[documented-not-enforced]` the docs say it; nothing in code or IAM makes it true.
 - **`UNVERIFIED`** marks a claim that source alone cannot settle, with what would settle it.
+- **`[maintainer-stated]`** marks a claim that rests on the maintainers' statements of 2026-11-09 and not on source. It outranks docs and ranks below source. Where it disagrees with source the item is marked **Conflict** and stays open.
 - Each sub-issue follows the same ten sections: scope; actors and principals; entities and identifiers; data-flow traces; resource lifecycle; junction assertions; artifacts; failure modes and partial states; configuration conditionals; open questions. Domains were split into several files sized to fit GitHub issue bodies (65,536 characters), so each file can become one issue.
 
 ## Domain map (sub-issues)
@@ -88,147 +89,275 @@ Each step names the sub-issue that traces it in detail.
 
 Per-investigation EFS access points and directory trees; per-investigation ECS task definitions; Fargate tasks and their ENIs; SSM/ECS Exec sessions; CloudWatch log streams (container, session, Lambda, Bedrock); the `TaskCreationRequests` EMF metric; S3 objects (task audit sync, reaper final backup, Bedrock large payloads); task-scoped credential volumes and persistent home files; CLI config and token-cache files; STS sessions; TA SQLite rows, EC2 host filesystem, config file copies, Firehose audit objects. Full table with name/path patterns and creators: [Resource inventory (3/3): Boundary variables, HCP workspace definitions, Keycloak objects, runtime-created resources](16-in3.md) section E.
 
-## Maintainer decisions recorded so far
+## Maintainer review of 2026-11-09
 
-Asked on 2026-11-08 while preparing this grounding:
+George Adams and Tim Williams walked the consolidated question list on 2026-11-09. This issue and sub-issues [#2](https://github.com/geowa4/rosa-boundary/issues/2), [#4](https://github.com/geowa4/rosa-boundary/issues/4), [#6](https://github.com/geowa4/rosa-boundary/issues/6), [#8](https://github.com/geowa4/rosa-boundary/issues/8), [#10](https://github.com/geowa4/rosa-boundary/issues/10), [#11](https://github.com/geowa4/rosa-boundary/issues/11) and [#14](https://github.com/geowa4/rosa-boundary/issues/14) were updated on 2026-11-10 with the outcome. Each of those sub-issues now carries a "Maintainer review" section, placed just before its open-questions section, with the full answer per question and the effect on that part's assertions.
 
-| Topic | Question | Decision |
+- Statements from the conversation are tagged `[maintainer-stated]`. They are testimony. Where one could be checked against source it was, and the citation is in the sub-issue.
+- The conversation ran out of time. It covered Identity and Provisioning in order, then selected items from Teardown, Runtime, Audit and Inventory. Trusted Actions was set aside.
+- Many findings were confirmed as defects, from docs drift to behavioural bugs. Fixing them is tracked separately by the maintainers and is out of scope here; the grounding only records which side is authoritative.
+
+### Domain statements established by the maintainers
+
+These are the statements the ontology can build on. Detail and citations are in the sub-issue named.
+
+**Identity and trust**
+
+- Staging and production authenticate against the Red Hat EmployeeIDP Keycloak. Its realm, client, mappers and token lifetimes are outside Boundary's control and slow to change. No Boundary-owned Keycloak serves any deployed flow. ([#2](https://github.com/geowa4/rosa-boundary/issues/2))
+- `uuid` is the only reliable person identifier. EmployeeIDP's `preferred_username` is not guaranteed unique; `username` values are display data. ([#4](https://github.com/geowa4/rosa-boundary/issues/4))
+- `principal_tags` carries `uuid` and `roles`; `transitive_tag_keys` includes both but nothing uses role chaining. The device grant and PKCE enforcement are on. Access tokens live 15 minutes. ([#2](https://github.com/geowa4/rosa-boundary/issues/2))
+- The required group is the trust boundary. Investigations are a shared SRE resource: any member may hand over, reuse or close any investigation. Only ECS Exec and task stop are per-person, through ABAC. ([#4](https://github.com/geowa4/rosa-boundary/issues/4))
+- Requirement, not yet met: every action must be attributable to the person who performed it. ([#4](https://github.com/geowa4/rosa-boundary/issues/4), [#11](https://github.com/geowa4/rosa-boundary/issues/11))
+- The organization SCP and the audit-reader role are external preconditions, not defined in this repository. ([#4](https://github.com/geowa4/rosa-boundary/issues/4), [#11](https://github.com/geowa4/rosa-boundary/issues/11))
+
+**Investigations and sessions**
+
+- An investigation **is** an EFS access point plus the directory behind it, identified by `(cluster_id, investigation_id)`. A task mounts its investigation's directory. ([#6](https://github.com/geowa4/rosa-boundary/issues/6))
+- An investigation has many tasks over its life and at most one running at a time. Sequential tasks, possibly run by different SREs, share the same files; that sharing is the purpose. ([#6](https://github.com/geowa4/rosa-boundary/issues/6))
+- Parallel work on one cluster requires separate investigations. A cluster may have any number of investigations. An investigation requires a cluster ID, although nothing currently depends on that link. ([#6](https://github.com/geowa4/rosa-boundary/issues/6))
+- The access point's owner tags name the creator permanently. ([#6](https://github.com/geowa4/rosa-boundary/issues/6))
+- Handover is intended so that a different SRE can take over an investigation whose previous user left a task running. Taking over from yourself is a bug. ([#6](https://github.com/geowa4/rosa-boundary/issues/6))
+- Every task has a deadline, and deadlines are meant to be enforced strictly. Source currently contradicts strict enforcement; see the open items. ([#6](https://github.com/geowa4/rosa-boundary/issues/6), [#8](https://github.com/geowa4/rosa-boundary/issues/8))
+- "Task" is being renamed "session" in the CLI and has been on `main` since the pin.
+
+**Teardown**
+
+- The investigation reaper backs up to S3 before deleting, as a safety net against a wrong deletion. `investigation close` deliberately makes no backup. ([#8](https://github.com/geowa4/rosa-boundary/issues/8), [#11](https://github.com/geowa4/rosa-boundary/issues/11))
+- There is no in-product reconciliation for orphaned resources. The remedy is break-glass operator access, which today is the standard SRE route into the AWS account; a Boundary-specific procedure is still to be defined. ([#8](https://github.com/geowa4/rosa-boundary/issues/8))
+
+**Dormant or obsolete**
+
+- `deploy/keycloak/` and its runbooks are orphaned and to be removed. ([#2](https://github.com/geowa4/rosa-boundary/issues/2))
+- `OC_VERSION` / `--oc-version` are obsolete and to be removed; the image ships one current `oc`. ([#6](https://github.com/geowa4/rosa-boundary/issues/6), [#10](https://github.com/geowa4/rosa-boundary/issues/10))
+- The kube-proxy sidecar is unused and disabled in every deployment; it is kept for possible restricted environments. SREs do not normally hold a kubeconfig for customer clusters. ([#6](https://github.com/geowa4/rosa-boundary/issues/6), [#10](https://github.com/geowa4/rosa-boundary/issues/10))
+- Trusted Actions is out of focus for now. Its audit sink is a placeholder mock logger; a real one is intended. ([#14](https://github.com/geowa4/rosa-boundary/issues/14))
+
+### Decisions recorded
+
+| Topic | Decision | When |
 |---|---|---|
-| Handover vs 409 | Source stops an existing RUNNING task and launches a new one (409 only when an ECS Exec session is active); docs say a second launch always returns 409. Which is the contract? | **Undecided** — recorded as doc drift and as open question OQ-PR-2 below |
-| Soft deadline | `reap-tasks` skips expired tasks that have an active ECS Exec session every run, so an open shell extends a task indefinitely; docs call the deadline tamper-proof. | **Undecided** — open question OQ-TD-4 |
-| Ownership | Nothing binds an investigation to its creator: any `required_groups` member can hand over, reuse the access point, or delete any managed access point; only ECS Exec and `stop-task` are ABAC-scoped. | **Undecided** — open question OQ-ID-7 |
-| In-container privilege | `sre` has passwordless sudo and the only AWS identity is the shared task role (bucket-wide `PutObject`, Bedrock, `PutLogEvents` into the session log group). | **To be tightened** — treat as a deviation to fix, not accepted risk (OQ-RT-4, OQ-RT-5, OQ-AU-7) |
+| Handover vs 409 | **Decided.** Handover across users is intended; same-user handover is a bug; the docs' unconditional 409 is wrong. The rule when the other user's session is still active was left vague (OQ-PR-2). | 2026-11-09 |
+| Ownership | **Intended.** Any member of the required group may manage any investigation. A post-pin CLI owner check on `investigation close` contradicts this (OQ-ID-7). | 2026-11-09 |
+| Deadline | **Intent stated: strict.** Source shows the reaper sparing tasks with an active session. Unresolved (OQ-TD-4). | 2026-11-09 |
+| In-container privilege | **To be tightened.** Passwordless sudo and the shared task role are a deviation to fix, not accepted risk (OQ-RT-4, OQ-RT-5, OQ-AU-7). Not revisited on 2026-11-09. | 2026-11-08 |
+| `oc` version selection | **Remove.** Always ship the latest `oc` (OQ-PR-6, OQ-RT-1). | 2026-11-09 |
+| Dev Keycloak | **Remove** `deploy/keycloak/` and its runbooks (OQ-KC-1, OQ-KC-6, OQ-KC-7, OQ-IN-5). | 2026-11-09 |
+| kube-proxy sidecar | **Keep, dormant** (OQ-PR-7, OQ-RT-6, OQ-IN-1). | 2026-11-09 |
+| `get_config` without an OIDC token | **Provisionally accepted**; a review story is to be raised (OQ-ID-8). | 2026-11-09 |
+| Launch and access-point races | **Deferred** as too rare to matter (OQ-PR-5, OQ-PR-9). | 2026-11-09 |
+| Trusted Actions questions | **Deferred** wholesale, except the unused grants follow-up (OQ-TA-9, OQ-IN-2). | 2026-11-09 |
 
 ---
 
-## ⚠️ Questions for the maintainer (consolidated from every sub-issue)
+## ⚠️ Still open: follow-up for George
 
-> These are everything source alone could not settle, plus design-intent questions. Each carries an ID so the ontology work can reference it. Answers can be recorded next to each question here or in the eventual issue; each domain file's section 10 holds the same text with full context.
+> Everything below is unresolved after the 2026-11-09 review. Answers can be left as comments here.
 
-### Identity — Keycloak IdP ([Keycloak identity provider (runtime): claims, flows, token lifetimes, IdP state](01-kc.md))
+### A. What was said disagrees with what the source does
 
-- **OQ-KC-1** **Where is the real realm definition?** No `KeycloakRealmImport` or realm JSON is committed; docs claim one. Settle by locating the dev realm export (admin API `GET /admin/realms/rosa-boundary`) and committing or linking it.
-- **OQ-KC-2** **EmployeeIDP client configuration is unobservable from the repo**: which mapper emits `https://aws.amazon.com/tags`, what `principal_tags` keys exist (`uuid`, `roles`), whether `transitive_tag_keys` includes `uuid`/`roles`, token lifespans, and whether the device grant and PKCE enforcement are enabled. Settle by running [tests/oidc-token-debug.py](https://github.com/geowa4/rosa-boundary/blob/509078b/tests/oidc-token-debug.py) against EmployeeIDP and recording a redacted claim shape.
-- **OQ-KC-3** **ID-token lifespan** for both IdPs (drives the mid-workflow expiry analysis in Part B).
-- **OQ-KC-4** **Does AWS STS still enforce the pinned thumbprint** for the EmployeeIDP CA? Settle via AWS docs for the CA in use and a controlled cert rotation in dev.
-- **OQ-KC-5** **ESO/CNPG password rotation semantics** (A4 step 4).
-- **OQ-KC-6** Orphaned `secret-store.yaml`/`service-account.yaml`: intended or leftover? (Not applied by the overlay.)
-- **OQ-KC-7** **DRIFT inventory for Part A docs:** `tools/sre-auth/get-oidc-token.sh` does not exist ([keycloak-realm-setup.md#L293-L298](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/configuration/keycloak-realm-setup.md#L293-L298), [troubleshooting.md#L102-L103](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/runbooks/troubleshooting.md#L102-L103); replacement is `tests/oidc-token-debug.py`); `boundary-admin/boundary-user` vs `sre-admin/sre-user`; documented realm lacks the AWS tags mapper and device grant the code depends on; README says group must contain `sre-team` ([README.md#L90](https://github.com/geowa4/rosa-boundary/blob/509078b/README.md#L90)) while staging requires `ai-sd-sre` ([hcp-terraform/rosa-boundary/main.tf#L425-L426](https://github.com/geowa4/rosa-boundary/blob/509078b/hcp-terraform/rosa-boundary/main.tf#L425-L426)).
+1. **OQ-TD-4, deadline strictness.** Tim recalls testing that a task is killed at its timeout even with an active session. `reap-tasks` at the pinned commit and on `main` skips expired tasks that have an active ECS Exec session, and nothing else enforces the deadline. Needs a recorded test in a personal dev environment, then a decision on whether the session protection stays. Detail in [#8](https://github.com/geowa4/rosa-boundary/issues/8).
+2. **OQ-ID-7, who may close an investigation.** The stated intent is any SRE. Since the CLI refresh, `investigation close` refuses unless the caller's `sub` matches the access point's `oidc_sub`; IAM still permits anyone in the role. Which is the contract? Detail in [#4](https://github.com/geowa4/rosa-boundary/issues/4).
+3. **OQ-PR-2, handover while the other user is still connected.** The code returns 409 when any active session exists. The conversation said takeover is allowed "if they don't have a session or in certain cases". Gemini's quick notes state the opposite (takeover "when active SSM sessions exist"); the transcript does not support that reading. Please state the rule. Detail in [#6](https://github.com/geowa4/rosa-boundary/issues/6).
 
-### Identity — CLI and AWS chain ([CLI and AWS identity chain (2/2): IAM/code assertions, artifacts, failure modes, config, open questions](03-id2.md))
+### B. Decisions or facts still needed
 
-- **OQ-ID-1** **Does STS actually set `aws:PrincipalTag/uuid` from EmployeeIDP tokens** (i.e. is `uuid` in `principal_tags` and does `transitive_tag_keys` matter)? Only inferable from Terraform descriptions and the debug script; settle with a live `start-task` + `join-task` against staging and a CloudTrail `AssumeRoleWithWebIdentity` event showing `principalTags`.
-- **OQ-ID-2** **ID-token lifespan from EmployeeIDP** and therefore how often `start-task` step 4 or `join-task` prompts for re-login.
-- **OQ-ID-3** **STS credential `DurationSeconds` default**: code sends none; confirm 3600 s in CloudTrail `responseElements.credentials.expiration`.
-- **OQ-ID-4** **SSM session survival after SRE-role credential expiry** (plugin keeps websocket?). Settle with a >1 h session in dev.
-- **OQ-ID-5** **No Lambda unit test exercises `ABAC_TAG_KEY=uuid` end-to-end** (403 path and tag key). All tag tests use `username` ([test_handler.py#L2542-L2728](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/test_handler.py#L2542-L2728)). Add a parametrized test.
-- **OQ-ID-6** **No test asserts Lambda `ABAC_TAG_KEY` env equals the IAM condition key** (C10); settle with a Terraform test comparing `local.lambda_env_vars.ABAC_TAG_KEY` to the policy condition key.
-- **OQ-ID-7** **Ownership gap (C12):** is it intended that any member of `required_groups` can hand over or close any investigation and that `close-investigation` can delete any `ManagedBy=rosa-boundary-lambda` access point? Decide and either document as design or add `oidc_sub`/`uuid` checks.
-- **OQ-ID-8** **`get_config` exposure:** acceptable that any invoker-role session (any aud-matching, role-tagged token) can read deployment ARNs without an OIDC token?
-- **OQ-ID-9** **SCP (F2)** is referenced but not in repo; obtain the org SCP text or mark as external precondition.
-- **OQ-ID-10** **CloudTrail/role-session-name audit linkage:** `rosa-boundary-<owner>` appears only on `start-task` step 2; other commands use fixed names, so CloudTrail cannot attribute `join-task`/`stop-task` to a human without the session tags. Confirm whether session tags (`uuid`) are recorded in CloudTrail for this account.
-- **OQ-ID-11** **DRIFT to fix:** `aws-iam-policies.md` (whole IAM-user/group model), README identity table (`username`, `sre-team`, `~/.rosa-boundary`), Lambda README (`:sub` trust, Bearer header), `uuid-allowlist.md` (regional vs account root), `personal-dev-bootstrap.md#L5` (`principal_tags.username` example), `troubleshooting.md` (`sre-team`, `tools/sre-auth`), LocalStack `test_tag_isolation.py` docstrings (`username`).
-- **OQ-ID-12** **Unused regional variables** (C15): confirm they are intentionally retained for HCP variable compatibility, or remove them to avoid the false impression that the regional workspace controls trust.
+- **OQ-ID-3 / OQ-PR-10.** What should the STS session duration be for the two role assumptions? Today none is sent and the STS default applies.
+- **OQ-ID-4.** Is it acceptable that a session outlives the SRE-role credentials? Where does the recalled one-hour idle timeout come from? Nothing in the repository sets one.
+- **OQ-ID-12 / OQ-IN-3.** Ten `deploy/regional` variables are set by workspaces but used by no regional resource. Tim needed the specifics; the list is in [#4](https://github.com/geowa4/rosa-boundary/issues/4). Keep for workspace compatibility, or remove?
+- **OQ-KC-4.** Does STS still enforce the pinned OIDC thumbprint for EmployeeIDP's CA? Nobody knew.
+- **OQ-KC-2 / OQ-KC-3.** Record a redacted EmployeeIDP ID-token claim shape and its real lifetime. The 15 minutes quoted was for access tokens.
+- **OQ-TD-1.** Confirm that a missing `CreatedAt` is meant to count as immediately stale (code) and not as protected by the grace period (docs).
+- **OQ-AU-9.** `investigation close` leaves the EFS directory on the file system with no backup and no cleanup path, because reaper discovery is driven by access points (G24 in [#8](https://github.com/geowa4/rosa-boundary/issues/8)). Accept, or fix?
+- **OQ-AU-8.** Who may assume the audit-reader role, and who can read ECS Exec transcripts, which the runbook says that role cannot?
+- **OQ-ID-10 / OQ-AU-4 / OQ-AU-5.** How will attribution be achieved: CloudTrail session tags, per-person role session names, S3 data events, or Lambda logs?
+- **OQ-RT-4 / OQ-RT-5 / OQ-AU-7.** The tightening of in-container privilege has a decision but no design.
+- **OQ-PR-1.** Is the Lambda's `DeleteAccessPoint` grant on the file-system ARN effective? Suspected bug; current state unknown.
+- **OQ-TD-3.** Is the reaper's 300 s budget enough for real workspaces?
+- **OQ-TA-9 / OQ-IN-2.** Are the unused Trusted Actions S3 and metrics grants reserved for the real audit logger?
 
-### Provisioning and discovery ([Investigation and task provisioning (2/2): lifecycle, assertions, artifacts, failure modes, config, open questions](05-pr2.md))
+### C. Not reached in the conversation
 
-- **OQ-PR-1** **IAM resource type for `DeleteAccessPoint` in the Lambda policy.** The Lambda's EFS policy grants `elasticfilesystem:DeleteAccessPoint` with `Resource = <file-system ARN>` ([iam.tf#L299-L303](https://github.com/geowa4/rosa-boundary/blob/509078b/deploy/regional/iam.tf#L299-L303)); the SRE-shared and reaper policies use `access-point/*` ARNs for the same action ([iam.tf#L228-L233](https://github.com/geowa4/rosa-boundary/blob/509078b/deploy/regional/iam.tf#L228-L233), [lambda-reap-investigations.tf#L60-L69](https://github.com/geowa4/rosa-boundary/blob/509078b/deploy/regional/lambda-reap-investigations.tf#L60-L69)). If EFS evaluates this action against the access-point ARN, every rollback `delete_access_point` in the Lambda ([H#L899](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/handler.py#L899), [#L976](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/handler.py#L976), [#L1032](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/handler.py#L1032), [#L1085](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/handler.py#L1085)) fails with AccessDenied and orphans the AP. UNVERIFIED — settle with IAM policy simulation or CloudTrail for the Lambda role; unit tests mock boto3 and LocalStack does not enforce IAM.
-- **OQ-PR-2** **Docs vs code on duplicate handling.** [investigations-and-tasks.md#L14](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L14), [#L26](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L26), [#L87](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L87), [#L99](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L99), [#L208-L210](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L208-L210) say a second launch returns HTTP 409 and the caller should `join-task`. Code performs **handover** (stops the existing task and launches a new one), returning 409 only when an active SSM session exists ([H#L734-L826](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/handler.py#L734-L826)). Drift.
-- **OQ-PR-3** **Default timeout drift.** Docs say default 1 hour ([investigations-and-tasks.md#L26](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L26)); Terraform default is 28800 s ([variables.tf#L320-L323](https://github.com/geowa4/rosa-boundary/blob/509078b/deploy/regional/variables.tf#L320-L323)); CLI flag default is 3600 ([start_task.go#L57](https://github.com/geowa4/rosa-boundary/blob/509078b/internal/cmd/start_task.go#L57)); CLI `0` cannot be expressed (F20). Which is the intended contract?
-- **OQ-PR-4** **Tag-set drift in docs.** AP tags documented without `Name`/`CreatedAt` ([investigations-and-tasks.md#L66-L71](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L66-L71)); task tags documented as `username` and without `oidc_sub`/`oc_version` ([#L77-L83](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L77-L83)); Lambda README omits `task_timeout`/`deadline` ([README.md#L226-L233](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/README.md#L226-L233)) and still describes per-user IAM roles ([README.md#L3-L11](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/README.md#L3-L11)). Real set: A3.
-- **OQ-PR-5** **TOCTOU description.** Docs say the race exists "before either task reaches RUNNING" ([#L163](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L163)); the filter is on *desired* status, so the window is only between concurrent `ListTasks` and `RunTask` calls. UNVERIFIED live; settle by launching two tasks and listing with `desiredStatus=RUNNING` while PENDING.
-- **OQ-PR-6** **`oc_version` unvalidated** end to end (A3). Is any downstream consumer (entrypoint/`alternatives`) relying on a safe format? (Other agent's domain for the consumer; the producer gap is here.)
-- **OQ-PR-7** **Hardcoded secret prefix** `rosa-boundary/clusters/...` vs execution-role grant `${var.project}/*` ([H#L621-L624](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/create-investigation/handler.py#L621-L624), [iam.tf#L87](https://github.com/geowa4/rosa-boundary/blob/509078b/deploy/regional/iam.tf#L87)): deployments with `var.project != "rosa-boundary"` and `enable_kube_proxy=true` would fail at task start. UNVERIFIED (depends on deployed `var.project`).
-- **OQ-PR-8** **Creator tags frozen on AP reuse.** `username`/`oidc_sub` on the AP always name the creator; `list-investigations` "OWNER" is therefore the creator, not the current task owner. Intended?
-- **OQ-PR-9** **Concurrent AP creation / `creating` state.** Two near-simultaneous first launches (or F7) can create two APs with the same root path; the Lambda then picks the first matching `available` one, and `close-investigation` picks `matches[0]` ([efs.go#L101](https://github.com/geowa4/rosa-boundary/blob/509078b/internal/aws/efs.go#L101)). No test covers duplicates.
-- **OQ-PR-10** **STS session duration** for the CLI's two role assumptions is not visible in the traced files (UNVERIFIED; settle in `internal/auth`/`internal/aws/sts.go`).
+- **Teardown ([#8](https://github.com/geowa4/rosa-boundary/issues/8)):** OQ-TD-5 family-prefix coupling to the ECS cluster name; OQ-TD-7 access-point deletion under a live mount and directory re-creation; OQ-TD-11 proof of a completed S3 sync on stop.
+- **Runtime ([#10](https://github.com/geowa4/rosa-boundary/issues/10)):** OQ-RT-3 `curl` in the final image; OQ-RT-7 default exec command docs; OQ-RT-8 VPC endpoints listed in docs but not declared; OQ-RT-9 AWS CLI path docs; OQ-RT-10 OCM token not revoked on clear or stop.
+- **Audit ([#11](https://github.com/geowa4/rosa-boundary/issues/11)):** OQ-AU-1 `stopTimeout` 120 s vs `SYNC_TIMEOUT` 300 s; OQ-AU-2 no sync completion marker; OQ-AU-3 session log stream naming; OQ-AU-6 whether the OCM payload appears in session transcripts; OQ-AU-10 untested areas.
+- **Inventory:** OQ-IN-4 Trusted Actions placeholder security groups; OQ-IN-6 Trusted Actions workspace bindings and co-location in the Boundary staging VPC.
+- **Trusted Actions ([#14](https://github.com/geowa4/rosa-boundary/issues/14)):** OQ-TA-1 to OQ-TA-14, deferred.
 
-### Teardown and reaping ([Teardown and reaping (2/2): lifecycle, assertions, artifacts, failure modes, config, open questions](07-td2.md))
+---
 
-- **OQ-TD-1** **Legacy-fallback doc drift.** [investigations-and-tasks.md#L155](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L155) says "Missing creation time does not bypass the grace period"; code treats a missing `CreatedAt` as immediately stale when idle ([RI#L293-L303](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/reap-investigations/handler.py#L293-L303), tests [#L828-L845](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/reap-investigations/test_handler.py#L828-L845)). Also the FAQ "Are investigations automatically cleaned up? No." ([#L188-L190](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L188-L190)) contradicts the reaper section ([#L153-L155](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L153-L155)) and the table ([#L57-L59](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L57-L59)) which omits the reaper as a cleaner of APs.
-- **OQ-TD-2** **Identifier regex mismatch** between creator and reaper (G19): which is authoritative? Any existing APs with leading `-`/`_` ids would be permanently un-reapable. Settle by `DescribeAccessPoints` in each environment.
-- **OQ-TD-3** **Reaper S3 backup completeness and cost**: no incremental upload, re-uploads on every retry (G15); `upload_file` multipart requires `s3:AbortMultipartUpload` for cleanup on failure (not granted; the bucket's 7-day abort lifecycle at [s3.tf#L131-L137](https://github.com/geowa4/rosa-boundary/blob/509078b/deploy/regional/s3.tf#L131-L137) mitigates). Is the 300 s Lambda budget adequate for real workspaces? UNVERIFIED — needs a live run with a multi-GB directory.
-- **OQ-TD-4** **Deadline is soft while a session is open** (G12). Is "indefinite extension by keeping a shell open" acceptable, or should the reaper enforce a hard upper bound? Not stated in docs ([investigations-and-tasks.md#L147-L151](https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/investigations-and-tasks.md#L147-L151) omits the protection).
-- **OQ-TD-5** **`close-investigation` family prefix coupling** to `cfg.ClusterName` (B6, G7): confirm all deployments keep `aws_ecs_cluster.main.name == aws_ecs_task_definition.rosa_boundary.family`; consider returning the base family from `get_config`.
-- **OQ-TD-6** **Orphan ACTIVE task definitions** (G7, G18) have no reconciliation path. Confirm whether an operator runbook exists.
-- **OQ-TD-7** **AP deletion under a live mount** (G4, G8) and **EFS root re-creation after `rmtree`** (G17): AWS behaviours assumed, UNVERIFIED — settle with a live dev-environment test (stop a task, delete AP while mounted; reuse AP after directory removal).
-- **OQ-TD-8** **reap-tasks returns error dicts instead of raising** (G13): no native Lambda `Errors` alarm fires on systemic failure; only the summary log line. Intended?
-- **OQ-TD-9** **`StopTask` IAM condition uses `ForAnyValue:StringLike`** on a single-valued tag key ([iam.tf#L328](https://github.com/geowa4/rosa-boundary/blob/509078b/deploy/regional/iam.tf#L328)); the LocalStack policy-simulation test is skipped ([test_task_timeout.py#L262-L267](https://github.com/geowa4/rosa-boundary/blob/509078b/tests/localstack/integration/test_task_timeout.py#L262-L267)). Verify once against real IAM.
-- **OQ-TD-10** **Reaper lists task definitions account-wide** ([RI#L370-L399](https://github.com/geowa4/rosa-boundary/blob/509078b/lambda/reap-investigations/handler.py#L370-L399)) — in accounts with many families this may dominate the 300 s budget; UNVERIFIED.
-- **OQ-TD-11** **Partial S3 sync on stop** (G2): `stop-task` prints that the container syncs to S3 but neither CLI nor reaper verifies it; the audit agent's domain should confirm what evidence proves a completed sync.
+## Status of every question
 
-### Container runtime and session ([Container runtime and interactive session (2/2): lifecycle, assertions, artifacts, failure modes, config, open questions](09-rt2.md))
+Full answers are in the sub-issue named in each heading. Status values: **Answered**; **Intended**; **Bug** (defect or gap, fix tracked separately); **Docs** (code authoritative); **Deferred**; **Conflict**; **Open**.
 
-- **OQ-RT-1** **`OC_VERSION` is dead at this commit.** Image ships one `oc` (4.22.18) at `/usr/local/bin/oc`; entrypoint looks for `/opt/openshift/${OC_VERSION}/oc`. README, skel CLAUDE.md, overview.md claim 4.14–4.20 switching. Settle: run `OC_VERSION=4.20 /usr/local/bin/entrypoint.sh oc version --client` in the image and confirm the warning + 4.22 output. (https://github.com/geowa4/rosa-boundary/blob/509078b/skel/sre/.claude/CLAUDE.md#L17-L33 ; https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/overview.md#L140)
-- **OQ-RT-2** **ECS Exec shell environment.** Exec shells receive the task-definition environment, not the entrypoint's exported `AWS_REGION`/`CLAUDE_CODE_USE_BEDROCK`. Does `claude` in an exec shell find a region (via `AWS_REGION` absent → SDK default chain / `AWS_DEFAULT_REGION`)? UNVERIFIED; settle with `env | grep AWS` inside a live session.
-- **OQ-RT-3** **`curl` in the final image.** Entrypoint and sidecar health check rely on `curl`; the final stage does not install it explicitly (UBI9 base ships `curl-minimal`). Settle: `podman run --rm <image> command -v curl`.
-- **OQ-RT-4** **sudo breadth.** `sre ALL=(ALL) NOPASSWD: ALL` lets an SRE become root, edit/kill the entrypoint (defeating exit sync), or read the kube-proxy's `/tmp/kubeconfig` via `nsenter`/`--container kube-proxy`. Already flagged in `docs/adversary-findings_20260702.json`. Is this accepted risk? (https://github.com/geowa4/rosa-boundary/blob/509078b/Containerfile#L247-L251)
-- **OQ-RT-5** **Task role is the only AWS identity in the container.** Any SRE can `aws s3 cp` arbitrary objects anywhere in the audit bucket (PutObject `/*`), including into another investigation's prefix (no `s3:prefix` condition, Object Lock makes such writes permanent). Settle: confirm intent; consider prefix-conditioned policy or object tagging.
-- **OQ-RT-6** **Secrets Manager kubeconfig provisioning** (`rosa-boundary/clusters/<cluster_id>/kubeconfig`) is not created by any root in this repo. Who writes it, and does an SRE-selected `--cluster-id` pick an arbitrary existing secret? UNVERIFIED.
-- **OQ-RT-7** **Default exec command drift**: overview.md says `runuser -u sre -- bash`; code is `runuser -u sre -- sh -c 'cd ~ && exec bash --login'` (https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/overview.md#L221).
-- **OQ-RT-8** **VPC endpoints drift**: overview.md lists ssmmessages/kms/logs/ecr/ecs interface endpoints; none exist. SSM, KMS, Logs, ECR, STS traffic traverses NAT. (https://github.com/geowa4/rosa-boundary/blob/509078b/docs/architecture/overview.md#L146 ; #L220)
-- **OQ-RT-9** **AWS CLI path drift** in skel CLAUDE.md (`/opt/aws-cli-official/v2/current/bin/aws`) vs image (`/usr/local/aws-cli/v2/current/aws` via alternatives) (https://github.com/geowa4/rosa-boundary/blob/509078b/skel/sre/.claude/CLAUDE.md#L15 ; https://github.com/geowa4/rosa-boundary/blob/509078b/Containerfile#L237).
-- **OQ-RT-10** **OCM token not revoked** on `clear` or task stop; only the local copy is removed. Expected SSO access-token lifetime (~15 min) is the real bound. UNVERIFIED with SSO config.
+### Identity: Keycloak IdP ([#2](https://github.com/geowa4/rosa-boundary/issues/2))
 
-### Audit evidence ([Audit evidence: CloudWatch, ECS Exec transcripts, S3 sync and WORM, Bedrock logging, CloudTrail, drift summary](10-au.md))
+| ID | Question | Status | Outcome |
+|---|---|---|---|
+| OQ-KC-1 | Where is the realm definition? | Answered | None by design; EmployeeIDP is external; `deploy/keycloak/` is orphaned and to be removed |
+| OQ-KC-2 | EmployeeIDP client configuration | Answered in part | Tags `uuid`, `roles`; both transitive; device grant and PKCE on; mapper name and claim shape still open |
+| OQ-KC-3 | ID-token lifespan | Answered in part | 15 min quoted for access tokens; confirm on an ID token |
+| OQ-KC-4 | Does STS enforce the thumbprint? | Open | Unknown; thumbprint is not a secret |
+| OQ-KC-5 | ESO/CNPG password rotation | Deferred | Dev Keycloak only; out of scope |
+| OQ-KC-6 | Orphaned overlay files | Answered | Leftover; removed with the directory |
+| OQ-KC-7 | Keycloak doc drift | Docs | Docs to be removed or fixed |
 
-- **OQ-AU-1** **stopTimeout (120 s) vs SYNC_TIMEOUT (300 s).** The code comment and overview.md say the timeout "prevents a hung sync from blocking shutdown past the ECS stop timeout"; arithmetically it cannot. Decide: raise `stopTimeout` (Fargate max 120 s — so it cannot be raised; UNVERIFIED current limit), lower `SYNC_TIMEOUT` to <120 so the warning is at least emitted, or add a pre-stop sync trigger (e.g., `stop-task` running an exec `sync` before StopTask). Live test: create a >1 GB home and stop; inspect prefix completeness and container exit reason.
-- **OQ-AU-2** **No completion marker.** Nothing distinguishes a complete snapshot from a partial one. Candidate: write a manifest/`.sync-complete` object last (would also give the auditor a positive assertion).
-- **OQ-AU-3** **ECS Exec session log stream naming** (`ecs-execute-command-<SESSION_ID>`) comes from README only; `docs/configuration/aws-iam-policies.md#L460-L469` shows a different pattern (`rosa-boundary/<task-id>/<timestamp>`) — doc drift; verify live with `describe-log-streams`.
-- **OQ-AU-4** **CloudTrail**: not in repo; docs claim it. Confirm an org/account trail exists and whether S3 **data events** for the audit bucket are enabled; otherwise task-role PutObject calls are unattributable.
-- **OQ-AU-5** **Identity correlation gap**: in-container AWS actions (S3 writes, Bedrock calls) are performed by the shared task role; SRE identity exists only in ECS task tags (purged after task stop) and Lambda logs. Confirm create-investigation logs persist `uuid`/`oidc_sub` next to the task ARN at INFO level (grep suggests only warnings mention `username`); otherwise after ~1 h a task ID cannot be mapped to a person without CloudTrail.
-- **OQ-AU-6** **Session log captures stdin?** Whether the OCM base64 payload appears in the ECS Exec transcript despite `stty -echo` is untested live. The design depends on it not appearing.
-- **OQ-AU-7** **Task role can PutLogEvents into the ssm-sessions group** (any stream under the group). Integrity of session transcripts against an in-container adversary is therefore convention-only; consider restricting or accepting.
-- **OQ-AU-8** **Audit reader role** is outside the repo (app-interface). Its exact policy (read `{account}-rosa-boundary-{env}-*` — which also matches the `-bedrock-invocations` bucket) is UNVERIFIED; confirm scope and whether it includes `s3:GetObjectVersion`.
-- **OQ-AU-9** **Reaper vs close-investigation**: `close-investigation` deletes the AP without any backup; afterwards the reaper (AP-driven discovery) may never back up or delete that directory. Verify `list_investigation_access_points`-based discovery and decide whether `close-investigation` should trigger a backup.
-- **OQ-AU-10** **Untested areas**: no test executes the real `aws s3 sync` against LocalStack (test_s3_audit simulates filtering with boto3); no test of signal timing / `timeout` interaction / SIGKILL; no test that `cleanup` exits 0 on sync failure (only that it calls sync); no Terraform test asserts `stopTimeout`, awslogs options, `execute_command_configuration`, S3 Object Lock/replication/lifecycle (LocalStack tests create their own buckets rather than planning `s3.tf`); kube-proxy LocalStack tests register a hand-built task definition that includes a `secrets` block the Terraform base lacks (https://github.com/geowa4/rosa-boundary/blob/509078b/tests/localstack/integration/test_kube_proxy_sidecar.py#L100-L106 vs https://github.com/geowa4/rosa-boundary/blob/509078b/deploy/regional/ecs.tf#L175-L224), so they do not validate `ecs.tf`. Shell tests run via `make test-shell` (bats) and `scripts/test_all.py` (https://github.com/geowa4/rosa-boundary/blob/509078b/Makefile#L161-L172 ; https://github.com/geowa4/rosa-boundary/blob/509078b/scripts/test_all.py#L175); whether CI runs them is UNVERIFIED (no `.github/workflows` in repo; `.tekton` pipelines not inspected for bats).
+### Identity: CLI and AWS chain ([#4](https://github.com/geowa4/rosa-boundary/issues/4))
 
-### Trusted Actions ([Trusted Actions (3/3): resource lifecycle, assertions, artifacts, failure modes, open questions](13-ta3.md))
+| ID | Question | Status | Outcome |
+|---|---|---|---|
+| OQ-ID-1 | Is `aws:PrincipalTag/uuid` set? | Answered | Yes; transitive keys unused; no CloudTrail evidence captured |
+| OQ-ID-2 | ID-token lifespan | Answered in part | 15 min, same caveat as OQ-KC-3 |
+| OQ-ID-3 | STS `DurationSeconds` | Bug | Omitted by oversight; intended value undecided |
+| OQ-ID-4 | Session survives credential expiry | Answered as current behaviour | Yes; acceptability and the idle timeout's origin open |
+| OQ-ID-5 | No test with `ABAC_TAG_KEY=uuid` | Bug | Tests predate EmployeeIDP; CLI usernames come from `preferred_username` |
+| OQ-ID-6 | No test tying Lambda env to IAM key | Bug | Add a Terraform test |
+| OQ-ID-7 | Ownership gap | Intended, Conflict | Shared resource by design; post-pin CLI owner check contradicts it |
+| OQ-ID-8 | `get_config` exposure | Deferred | Provisionally accepted; review story to be raised |
+| OQ-ID-9 | SCP not in repo | Deferred | External precondition |
+| OQ-ID-10 | CloudTrail attribution | Open | Attribution is a stated requirement; tag capture unverified |
+| OQ-ID-11 | Identity doc drift | Docs | Code authoritative |
+| OQ-ID-12 | Unused regional variables | Open | Specifics to be sent to Tim |
 
-- **OQ-TA-1** **Does the deployed stage image start at all?** Terraform supplies no AWS region allowlist; a server at this commit exits at startup ([main.go#L256-L260](https://github.com/geowa4/rosa-boundary/blob/509078b/components/trusted-actions/cmd/server/main.go#L256-L260)). Settle: check `/ecs/rosa-trusted-actions` for the fatal string, or map the pinned digest to a source revision.
-- **OQ-TA-2** **Shared account/VPC with Boundary.** Same `vpc_id` and private subnets are Git-managed; same AWS account is implied by variable-set names only. Settle: compare the role ARN behind `rosa-trusted-actions-rosa-boundary-stage-…-aws-dynamic-creds` with Boundary's `150100906299`.
-- **OQ-TA-3** **Is the live TA infra equal to this Terraform copy?** HCP still points at the old repo. Settle: `terraform plan` from the live workspace vs this tree.
-- **OQ-TA-4** **Read-side authorization is role-agnostic.** Any configured role (incl. `ROSAAiAgent`) can read every execution's output and the entire audit log. Is that intended? Output can contain Secret `data` when secrets are allowlisted.
-- **OQ-TA-5** **Namespace allowlist in stage.** HCP stage sets no `allowed_namespaces` → permissive mode unless set in the UI. Settle: read workspace variables (not via UI edits, per repo policy).
-- **OQ-TA-6** **Executor authorization vs. actual access for `describe-nodes`, `list-alerts`, `get-pull-secret-email`**: the authorizer judges caller params, not what the action reads; least privilege depends entirely on Backplane honouring `RequiredRBAC`. Needs a Backplane-side verification that a `CreateTrustedActionRequest` cannot be widened and that `clusterRoleRules` are accepted for `describe-nodes`.
-- **OQ-TA-7** **Backplane session lifecycle.** TA never deletes trusted-action instances; what is Backplane's `expiry`, and are two sessions per `list-alerts` acceptable?
-- **OQ-TA-8** **Audit correlation gap.** The S3-forwarded per-action audit record has no execution id; the DB audit entry for GETs has no execution id; failure reasons live only in CloudWatch. Decide the authoritative audit source and whether the `audit.Logger` TODO ([main.go#L213-L218](https://github.com/geowa4/rosa-boundary/blob/509078b/components/trusted-actions/cmd/server/main.go#L213-L218)) is on a roadmap.
-- **OQ-TA-9** **Unused config/IAM surface.** `ROSA_TA_ALLOWED_ACCOUNTS`, `ROSA_TA_S3_BUCKET/PREFIX`, task-role S3 `PutObject` and `cloudwatch:PutMetricData` are dead. Remove or implement?
-- **OQ-TA-10** **Stale `running` rows and unbounded tables.** No reaper, no retention; single SQLite writer on a `chmod 777` host path reachable via SSM. Is Postgres/Aurora (Phase 2 placeholders) still planned, and what is the retention policy for execution outputs containing cluster/AWS data?
-- **OQ-TA-11** **Stage transport.** HTTP-only internal ALB and permissive CORS (`*` with credentials) — acceptable for stage? `rta` refuses to send tokens over HTTP, so how are stage callers expected to connect?
-- **OQ-TA-12** **Dependency behaviours relied upon but unverifiable here:** ocm-sdk `authentication.Handler` expiry/issuer/audience checks and JWKS caching; `Connection.TokensContext` refresh; backplane-cli assume-role chain, egress-IP restriction, STS session duration and `GetCloudCredentials` region semantics. Pin and review those versions ([go.mod#L24-L27](https://github.com/geowa4/rosa-boundary/blob/509078b/components/trusted-actions/go.mod#L24-L27)).
-- **OQ-TA-13** **HCP secret placement.** The Git-managed TA definition attaches `ocm_client_secret`/`backplane_client_secret` as **regional** workspace variables ([main.tf#L207-L224](https://github.com/geowa4/rosa-boundary/blob/509078b/hcp-terraform/rosa-trusted-actions/main.tf#L207-L224)), but only the **global** root declares those variables ([global/variables.tf#L50-L68](https://github.com/geowa4/rosa-boundary/blob/509078b/components/trusted-actions/terraform/global/variables.tf#L50-L68)); the global workspace block declares none of them. Either the live global workspace carries them out-of-band or the definition is wrong — settle in HCP.
-- **OQ-TA-14** **OpenAPI vs implementation drift** (catalog/describe `security: []`, 400/429/502 codes, `timed_out`, `audit-disabled`, `execution_id` on GET, `path` incl. query, ManifestWork fields): decide whether the spec is aspirational or should be trimmed to what the server does.
+### Provisioning and discovery ([#6](https://github.com/geowa4/rosa-boundary/issues/6))
 
-### Resource inventory ([Resource inventory (1/3): Boundary Terraform roots (account, network, regional) with runtime actor mapping](14-in1.md), [Resource inventory (2/3): Trusted Actions Terraform roots, TA variables, TA workspace definitions](15-in2.md), [Resource inventory (3/3): Boundary variables, HCP workspace definitions, Keycloak objects, runtime-created resources](16-in3.md))
+| ID | Question | Status | Outcome |
+|---|---|---|---|
+| OQ-PR-1 | `DeleteAccessPoint` resource type | Bug (suspected), Open | Follow up; settle with policy simulation |
+| OQ-PR-2 | Handover vs 409 | Answered | Cross-user handover intended; same-user is a bug; docs wrong; active-session rule open |
+| OQ-PR-3 | Default timeout drift | Docs | Code authoritative; every task has a deadline while the minimum is above 0 |
+| OQ-PR-4 | Tag-set drift | Docs | Code authoritative |
+| OQ-PR-5 | Launch race | Deferred | Real, too rare to pursue |
+| OQ-PR-6 | `oc_version` unvalidated | Answered | Obsolete; to be removed |
+| OQ-PR-7 | Hard-coded secret prefix | Deferred | Part of the dormant kube-proxy feature |
+| OQ-PR-8 | Creator tags frozen | Intended | Owner means creator |
+| OQ-PR-9 | Concurrent access-point creation | Deferred | Not pursued now |
+| OQ-PR-10 | STS session duration | Bug | Same as OQ-ID-3 |
 
-- **OQ-IN-1** Secrets Manager secret `rosa-boundary/clusters/{cluster_id}/kubeconfig` is referenced by the Lambda clone and the execution-role grant but created by nothing in the repository. Who provisions it, and can an SRE-chosen `--cluster-id` select an arbitrary existing secret?
-- **OQ-IN-2** TA task role grants `s3:PutObject` on `.../trusted-actions/*` and `cloudwatch:PutMetricData`, and config reads `ROSA_TA_S3_BUCKET`, but no TA Go code calls S3 or metrics. Dead grants or planned feature?
-- **OQ-IN-3** Ten `deploy/regional` variables (budget, `keycloak_thumbprint`, `oidc_session_duration`, uuid/role allowlist, stage/prod thumbprints) are set by workspace definitions but referenced by no regional resource; trust lives in `deploy/account`. Retained deliberately for HCP variable compatibility?
-- **OQ-IN-4** TA `aws_security_group.ecs_task` and `aurora` are Phase-2 placeholders referenced by nothing. Is Aurora still planned (see OQ-TA-10)?
-- **OQ-IN-5** Keycloak dev overlay files `secret-store.yaml` and `service-account.yaml` are not included in any kustomization. Leftover or intended?
-- **OQ-IN-6** TA HCP workspace definitions still target the original `rosa-trusted-actions` repository and attach global-root secrets to the regional workspace; TA stage shares the Boundary staging VPC and subnets. Confirm the live binding and whether same-account co-location is intended.
-- **OQ-IN-7** TA production audit sink is `audit.NewMockLogger` (log-only, in-memory slice), `enable_worm` defaults false with 1-day retention. Is that the intended production audit posture?
+### Teardown and reaping ([#8](https://github.com/geowa4/rosa-boundary/issues/8))
+
+| ID | Question | Status | Outcome |
+|---|---|---|---|
+| OQ-TD-1 | Missing `CreatedAt` handling | Open | Assumed code is right; unconfirmed |
+| OQ-TD-2 | Regex mismatch | Bug | Creator regex authoritative; fix the reaper |
+| OQ-TD-3 | Reaper backup robustness | Bug, Open | Missing multipart abort confirmed; time budget untested |
+| OQ-TD-4 | Soft deadline | Conflict, Open | Intent strict; source spares active sessions |
+| OQ-TD-5 | Family prefix coupling | Open | Not covered |
+| OQ-TD-6 | Orphan task definitions | Answered | No reconciliation; break-glass, procedure to be defined |
+| OQ-TD-7 | Access-point deletion under mount | Open | Not covered |
+| OQ-TD-8 | Reaper errors do not raise | Bug | Follow up for both reapers |
+| OQ-TD-9 | `ForAnyValue` and skipped test | Deferred | Harmless; LocalStack limitation; real-IAM check outstanding |
+| OQ-TD-10 | Account-wide task-definition listing | Bug | Confirmed |
+| OQ-TD-11 | Partial S3 sync on stop | Open | Not covered |
+
+### Container runtime and session ([#10](https://github.com/geowa4/rosa-boundary/issues/10))
+
+| ID | Question | Status | Outcome |
+|---|---|---|---|
+| OQ-RT-1 | `OC_VERSION` is dead | Answered | To be removed |
+| OQ-RT-2 | Exec shell environment | Answered in part | Claude Code works; region mechanism unverified |
+| OQ-RT-3 | `curl` in the image | Open | Not covered |
+| OQ-RT-4 | sudo breadth | Open | To be tightened; no design yet |
+| OQ-RT-5 | Shared task role | Open | To be tightened; no design yet |
+| OQ-RT-6 | Kubeconfig secret provisioning | Deferred | Dormant feature |
+| OQ-RT-7 | Default exec command docs | Open | Not covered |
+| OQ-RT-8 | VPC endpoints docs | Open | Not covered |
+| OQ-RT-9 | AWS CLI path docs | Open | Not covered |
+| OQ-RT-10 | OCM token not revoked | Open | Not covered |
+
+### Audit evidence ([#11](https://github.com/geowa4/rosa-boundary/issues/11))
+
+| ID | Question | Status | Outcome |
+|---|---|---|---|
+| OQ-AU-1 | `stopTimeout` vs `SYNC_TIMEOUT` | Open | Not covered |
+| OQ-AU-2 | No completion marker | Open | Not covered |
+| OQ-AU-3 | Session log stream naming | Open | Not covered |
+| OQ-AU-4 | CloudTrail | Open | Believed not to record session tags; unverified |
+| OQ-AU-5 | Identity correlation | Open | Attribution is a requirement |
+| OQ-AU-6 | Stdin in session logs | Open | Not covered |
+| OQ-AU-7 | Task role can write session logs | Open | To be tightened; no design yet |
+| OQ-AU-8 | Audit reader role | Answered in part | Exists outside the repo; trust undefined |
+| OQ-AU-9 | Reaper vs close backup | Answered in part | Close makes no backup by design; directory fate after close open |
+| OQ-AU-10 | Untested areas | Open | Not covered |
+
+### Trusted Actions ([#14](https://github.com/geowa4/rosa-boundary/issues/14)) and resource inventory ([#16](https://github.com/geowa4/rosa-boundary/issues/16), [#15](https://github.com/geowa4/rosa-boundary/issues/15), [#17](https://github.com/geowa4/rosa-boundary/issues/17))
+
+| ID | Question | Status | Outcome |
+|---|---|---|---|
+| OQ-TA-1 to OQ-TA-8, OQ-TA-10 to OQ-TA-14 | See [#14](https://github.com/geowa4/rosa-boundary/issues/14) | Deferred | Trusted Actions set aside |
+| OQ-TA-9 | Unused config and IAM surface | Open | Follow-up agreed |
+| OQ-IN-1 | Kubeconfig secret has no creator | Deferred | Dormant kube-proxy feature |
+| OQ-IN-2 | Unused Trusted Actions grants | Open | Follow-up agreed; likely reserved for the real audit logger |
+| OQ-IN-3 | Unused regional variables | Open | Same as OQ-ID-12 |
+| OQ-IN-4 | Placeholder security groups | Open | Not covered |
+| OQ-IN-5 | Orphan Keycloak overlay files | Answered | Leftover; to be removed |
+| OQ-IN-6 | Trusted Actions workspace bindings | Open | Not covered |
+| OQ-IN-7 | Mock audit logger in production | Answered | Placeholder; a real logger is intended and not yet written |
+
+### Defects and gaps confirmed in the review
+
+Recorded so the grounding marks them as deviations, not design. Fixes are tracked separately by the maintainers.
+
+- Same-user handover is possible (OQ-PR-2).
+- No `DurationSeconds` on either role assumption (OQ-ID-3, OQ-PR-10).
+- Reaper identifier regex is stricter than the creator's (OQ-TD-2).
+- Reaper role cannot abort failed multipart uploads (OQ-TD-3).
+- Reaping Lambdas return error dictionaries instead of raising (OQ-TD-8).
+- `reap-investigations` lists task definitions account-wide (OQ-TD-10).
+- Possible orphaned access points from the Lambda's `DeleteAccessPoint` grant (OQ-PR-1, suspected).
+- Tests keyed on `username`; no test with `uuid`; no Terraform test tying the Lambda's ABAC key to the IAM condition (OQ-ID-5, OQ-ID-6).
+- Docs wrong where code is right: timeouts, tag sets, identity model, Keycloak setup (OQ-PR-3, OQ-PR-4, OQ-ID-11, OQ-KC-7).
+- To remove: `deploy/keycloak/` with its runbooks; `OC_VERSION` and `--oc-version` (OQ-KC-1, OQ-PR-6).
+- To define: a Boundary break-glass procedure (OQ-TD-6); a review of `get_config` disclosure (OQ-ID-8); a real Trusted Actions audit logger (OQ-IN-7).
+
+---
+
+## Changes on `main` since the pinned commit
+
+Checked on 2026-11-10 against `main` at [`9dc6bbe`](https://github.com/geowa4/rosa-boundary/tree/9dc6bbe). The grounding stays pinned to `509078b`.
+
+**Unchanged, so every trace, IAM statement and inventory row for them still holds:** `lambda/` handlers, `deploy/`, `hcp-terraform/`, `entrypoint.sh`, `skel/`, `.tekton/`. Trusted Actions changed only in `go.mod`. The `Containerfile` changed only in pinned versions (`oc` 4.22.18 to 4.22.22, AWS CLI 2.39.5 to 2.39.6).
+
+**Changed: the CLI was restructured (#447).** Commands, files and line numbers in the CLI-side traces of [#3](https://github.com/geowa4/rosa-boundary/issues/3), [#5](https://github.com/geowa4/rosa-boundary/issues/5), [#7](https://github.com/geowa4/rosa-boundary/issues/7) and [#9](https://github.com/geowa4/rosa-boundary/issues/9) describe the pinned commit and no longer match `main`.
+
+| At the pin | On `main` | Behavioural difference that touches the grounding |
+|---|---|---|
+| `start-task` | `session create <cluster-id>` | `--session-timeout` defaults to 1 h, range 0 to 24 h, always sent explicitly, so an explicit 0 can now be requested (the Lambda rejects it under the default minimum). New flags `--connect`, `--no-wait`, `--with-credentials ocm`. |
+| `join-task` | `session join <session-id>` | none found |
+| `stop-task` | `session close <session-id>` | none found |
+| `list-tasks` | `session list` | none found |
+| `create-investigation` | `investigation create <cluster-id>` | none found |
+| `list-investigations` | `investigation list` | none found |
+| `close-investigation` | `investigation close <cluster-id> <investigation-id>` | **new client-side owner check** on `oidc_sub`; `--dry-run`, `--yes`, `--force`; verifies each task definition mounts the investigation's access point before deregistering |
+| `configure` | `config init`, `config list-profiles`, `config use-profile <name>`, `config get` | named deployment profiles replace the flat config file |
+| OCM credential commands | `session credentials configure ocm`, `session credentials clear ocm` | omitting the session ID only discovers sessions owned by the caller's `sub` |
+| `login` | `login` | none found |
+
+Role session names on `main` are `rosa-boundary-invoker`, `rosa-boundary-session`, `rosa-boundary-config-init`, and `rosa-boundary-<owner>` for the SRE-role assumption inside `session create`.
+
+Docs under `docs/` and the README were partly rewritten for the new command names; most drift listed below is still present. Before the CLI-side traces are used for the ontology they should be re-pinned to a commit that contains the new command tree.
 
 ---
 
 ## Headline doc-vs-source drift (details in the sub-issues)
 
-- Second `start-task` performs **handover**, not an unconditional 409 ([Investigation and task provisioning (1/2): actors, identifiers, start-task/handover/create/list/join traces](04-pr1.md)).
-- Default task timeout: docs 1 h, Terraform 28800 s, CLI flag 3600 s; the CLI cannot express "no timeout" because `0` is omitted and falls back to the Lambda default ([Investigation and task provisioning (2/2): lifecycle, assertions, artifacts, failure modes, config, open questions](05-pr2.md)).
-- Task tags carry `oidc_sub` and the configurable ABAC key (default `uuid`), not `username`; access-point tags also carry `Name` and `CreatedAt` ([Investigation and task provisioning (2/2): lifecycle, assertions, artifacts, failure modes, config, open questions](05-pr2.md), [CLI and AWS identity chain (2/2): IAM/code assertions, artifacts, failure modes, config, open questions](03-id2.md)).
-- The deadline is soft while an ECS Exec session is active; the reaper also fails closed when session state is unknown ([Teardown and reaping (1/2): stop-task, close-investigation, reap-tasks, reap-investigations traces](06-td1.md)).
-- `reap-investigations` treats a missing `CreatedAt` as immediately stale; docs say the opposite ([Teardown and reaping (2/2): lifecycle, assertions, artifacts, failure modes, config, open questions](07-td2.md)).
-- No `KeycloakRealmImport`, client or mapper is committed; the documented dev realm lacks the `https://aws.amazon.com/tags` mapper and the device grant the code depends on ([Keycloak identity provider (runtime): claims, flows, token lifetimes, IdP state](01-kc.md)).
-- `docs/configuration/aws-iam-policies.md` describes an IAM-user/group model with no Terraform counterpart ([CLI and AWS identity chain (2/2): IAM/code assertions, artifacts, failure modes, config, open questions](03-id2.md)).
-- `OC_VERSION` switching is a no-op: one `oc` (4.22.18) is installed and `/opt/openshift` does not exist ([Container runtime and interactive session (2/2): lifecycle, assertions, artifacts, failure modes, config, open questions](09-rt2.md)).
-- No ssmmessages/kms/logs/ecr/ecs VPC interface endpoints exist; only an S3 gateway and a Bedrock Runtime interface endpoint ([Container runtime and interactive session (2/2): lifecycle, assertions, artifacts, failure modes, config, open questions](09-rt2.md)).
-- `SYNC_TIMEOUT` (300 s) exceeds ECS `stopTimeout` (120 s), so a long sync is killed, not timed out; there is no completion marker ([Audit evidence: CloudWatch, ECS Exec transcripts, S3 sync and WORM, Bedrock logging, CloudTrail, drift summary](10-au.md)).
-- CloudTrail is documented as an audit source but configured nowhere in the repository ([Audit evidence: CloudWatch, ECS Exec transcripts, S3 sync and WORM, Bedrock logging, CloudTrail, drift summary](10-au.md)).
-- Trusted Actions ARCHITECTURE says Aurora; the Terraform deploys SQLite on an EBS volume attached to an EC2 ECS host; read endpoints are role-agnostic ([Trusted Actions (3/3): resource lifecycle, assertions, artifacts, failure modes, open questions](13-ta3.md)).
+Unless a bullet says otherwise, the 2026-11-09 review confirmed the code as authoritative and the docs as stale.
+
+- A second launch for an investigation performs **handover**, not an unconditional 409. Neither side matches the intended contract: cross-user handover is intended and same-user handover is a bug ([#5](https://github.com/geowa4/rosa-boundary/issues/5), [#6](https://github.com/geowa4/rosa-boundary/issues/6)).
+- Default task timeout: docs 1 h, Terraform 28800 s, CLI 3600 s. Code is authoritative. At the pin the CLI could not send 0; on `main` it can, and the Lambda rejects it under the default minimum ([#6](https://github.com/geowa4/rosa-boundary/issues/6)).
+- Task tags carry `oidc_sub` and the configurable ABAC key (default `uuid`), not `username`; access-point tags also carry `Name` and `CreatedAt`. Code is authoritative ([#6](https://github.com/geowa4/rosa-boundary/issues/6), [#4](https://github.com/geowa4/rosa-boundary/issues/4)).
+- The deadline is soft while an ECS Exec session is active; the reaper also fails closed when session state is unknown. **Unresolved conflict** with the stated intent of strict deadlines ([#7](https://github.com/geowa4/rosa-boundary/issues/7), [#8](https://github.com/geowa4/rosa-boundary/issues/8)).
+- `reap-investigations` treats a missing `CreatedAt` as immediately stale; docs say the opposite. Not yet confirmed which side is right ([#8](https://github.com/geowa4/rosa-boundary/issues/8)).
+- No `KeycloakRealmImport`, client or mapper is committed. Explained: the Boundary-owned Keycloak is obsolete and its manifests and docs are to be removed ([#2](https://github.com/geowa4/rosa-boundary/issues/2)).
+- `docs/configuration/aws-iam-policies.md` describes an IAM-user/group model with no Terraform counterpart. Docs to be fixed ([#4](https://github.com/geowa4/rosa-boundary/issues/4)).
+- `OC_VERSION` switching is a no-op: one `oc` is installed and `/opt/openshift` does not exist. The variable is to be removed ([#10](https://github.com/geowa4/rosa-boundary/issues/10)).
+- No ssmmessages/kms/logs/ecr/ecs VPC interface endpoints exist; only an S3 gateway and a Bedrock Runtime interface endpoint. Not reviewed ([#10](https://github.com/geowa4/rosa-boundary/issues/10)).
+- `SYNC_TIMEOUT` (300 s) exceeds ECS `stopTimeout` (120 s), so a long sync is killed, not timed out; there is no completion marker. Not reviewed ([#11](https://github.com/geowa4/rosa-boundary/issues/11)).
+- CloudTrail is documented as an audit source but configured nowhere in the repository. Not reviewed; attribution of every action is a stated requirement ([#11](https://github.com/geowa4/rosa-boundary/issues/11)).
+- Trusted Actions ARCHITECTURE says Aurora; the Terraform deploys SQLite on an EBS volume attached to an EC2 ECS host; read endpoints are role-agnostic. Not reviewed ([#14](https://github.com/geowa4/rosa-boundary/issues/14)).
 
 ## How to use and extend this grounding
 
+- Rank evidence as source and tests first, then `[maintainer-stated]`, then docs. Do not model an item marked **Conflict** either way until it is settled.
 - Treat each sub-issue's assertion table as the checklist for the ontology's constraints, and its artifact table as the list of observables a verifier can look for.
 - When code changes, re-pin: update the commit in the sub-issue header, re-verify the cited line ranges, and amend the affected rows rather than rewriting the trace.
 - Live-environment questions marked `UNVERIFIED` should be answered against a personal dev environment per `docs/runbooks/personal-dev-bootstrap.md`, never against staging or production, and the evidence linked back here.
